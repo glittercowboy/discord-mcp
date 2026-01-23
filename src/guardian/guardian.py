@@ -20,6 +20,36 @@ intents.message_content = True  # Required for Phase 5 link scanning
 client = discord.Client(intents=intents)
 
 
+def is_moderator_or_higher(member: discord.Member) -> bool:
+    """Check if member has moderator+ permissions.
+
+    Returns True if member has administrator, moderate_members, or manage_guild permissions.
+    Moderators bypass verification entirely.
+
+    Args:
+        member: Discord member to check
+
+    Returns:
+        True if member has moderator+ permissions, False otherwise
+    """
+    # Get highest role (excluding @everyone)
+    highest_role = max(
+        (r for r in member.roles if r.name != "@everyone"),
+        key=lambda r: r.position,
+        default=None
+    )
+
+    if highest_role is None:
+        return False
+
+    # Check for moderation permissions
+    return (
+        highest_role.permissions.administrator or
+        highest_role.permissions.moderate_members or
+        highest_role.permissions.manage_guild
+    )
+
+
 @client.event
 async def on_ready():
     """Initialize Guardian infrastructure when bot is ready."""
@@ -39,6 +69,11 @@ async def on_ready():
 async def on_member_join(member: discord.Member):
     """Assign @Unverified role to new members."""
     logger.info(f"New member joined: {member.name} in {member.guild.name}")
+
+    # Bypass verification for moderators
+    if is_moderator_or_higher(member):
+        logger.info(f"Moderator {member.name} bypassed verification in {member.guild.name}")
+        return
 
     try:
         # Get @Unverified role
