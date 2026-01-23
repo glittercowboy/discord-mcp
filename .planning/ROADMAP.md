@@ -45,10 +45,13 @@ Plans:
   3. Member who doesn't verify within 10 minutes is auto-kicked
   4. Moderator+ role members bypass verification entirely (never assigned @Unverified)
   5. All member joins, leaves, verification attempts log to #security-logs with timestamps
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] TBD during planning
+- [ ] 02-01-PLAN.md — Verification UI and moderator bypass logic
+- [ ] 02-02-PLAN.md — Timeout tracking and security logging utilities
+- [ ] 02-03-PLAN.md — Wire verification flow with logging
+- [ ] 02-04-PLAN.md — End-to-end verification testing
 
 ### Phase 3: Account Restrictions
 **Goal**: New accounts restricted from posting malicious content, admins control bot via slash commands
@@ -103,7 +106,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | ✓ Complete | 2026-01-23 |
-| 2. Verification Gate | 0/0 | Not started | - |
+| 2. Verification Gate | 0/4 | Ready to execute | - |
 | 3. Account Restrictions | 0/0 | Not started | - |
 | 4. Raid Detection | 0/0 | Not started | - |
 | 5. Link Scanning | 0/0 | Not started | - |
