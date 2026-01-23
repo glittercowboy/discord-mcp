@@ -12,7 +12,7 @@ GSD Guardian protects the GSD Discord community through layered security: verifi
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Bot infrastructure and auto-provisioning
+- [x] **Phase 1: Foundation** - Bot infrastructure and auto-provisioning
 - [ ] **Phase 2: Verification Gate** - Human verification with emoji challenge
 - [ ] **Phase 3: Account Restrictions** - New account filtering and control plane
 - [ ] **Phase 4: Raid Detection** - Join rate monitoring with lockdown
@@ -32,8 +32,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Gateway bot with idempotent infrastructure
-- [ ] 01-02-PLAN.md — Railway deployment and verification
+- [x] 01-01-PLAN.md — Gateway bot with idempotent infrastructure
+- [x] 01-02-PLAN.md — Railway deployment and verification
 
 ### Phase 2: Verification Gate
 **Goal**: New members must complete emoji challenge to access server
@@ -102,7 +102,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Planning complete | - |
+| 1. Foundation | 2/2 | ✓ Complete | 2026-01-23 |
 | 2. Verification Gate | 0/0 | Not started | - |
 | 3. Account Restrictions | 0/0 | Not started | - |
 | 4. Raid Detection | 0/0 | Not started | - |
