@@ -45,11 +45,17 @@ async def ensure_channel_exists(
         logger.info(f"Channel '#{channel_name}' already exists in {guild.name}")
         return channel
 
-    channel = await guild.create_text_channel(
-        channel_name,
-        overwrites=overwrites,
-        reason="Guardian initialization"
-    )
+    if overwrites:
+        channel = await guild.create_text_channel(
+            channel_name,
+            overwrites=overwrites,
+            reason="Guardian initialization"
+        )
+    else:
+        channel = await guild.create_text_channel(
+            channel_name,
+            reason="Guardian initialization"
+        )
     logger.info(f"Created channel '#{channel_name}' in {guild.name}")
     return channel
 
