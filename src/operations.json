@@ -808,7 +808,19 @@
           "parameters": {
             "prompts": {"type": "array", "required": false, "description": "Array of onboarding prompts"},
             "default_channel_ids": {"type": "array", "required": false, "description": "Default channels shown to new members"},
-            "enabled": {"type": "boolean", "required": false, "description": "Enable/disable onboarding"}
+            "enabled": {"type": "boolean", "required": false, "description": "Enable/disable onboarding"},
+            "mode": {"type": "integer", "required": false, "description": "Onboarding mode: 0=default, 1=advanced"}
+          }
+        },
+        "create_prompt": {
+          "description": "Create a new onboarding prompt",
+          "parameters": {
+            "title": {"type": "string", "required": true, "description": "Prompt title/question"},
+            "options": {"type": "array", "required": true, "description": "Array of options with title, description, emoji, role_ids, channel_ids"},
+            "single_select": {"type": "boolean", "required": false, "description": "Whether only one option can be selected"},
+            "required": {"type": "boolean", "required": false, "description": "Whether this prompt is required"},
+            "in_onboarding": {"type": "boolean", "required": false, "description": "Show in onboarding flow (true) or only in Channels & Roles tab (false)"},
+            "type": {"type": "integer", "required": false, "description": "Prompt type: 0=multiple choice"}
           }
         }
       }

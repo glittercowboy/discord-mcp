@@ -1931,6 +1931,8 @@ async def handle_onboarding_edit(params: dict) -> str:
         payload["default_channel_ids"] = params["default_channel_ids"]
     if params.get("enabled") is not None:
         payload["enabled"] = params["enabled"]
+    if params.get("mode") is not None:
+        payload["mode"] = params["mode"]
 
     async with httpx.AsyncClient() as client:
         resp = await client.put(
@@ -1940,6 +1942,31 @@ async def handle_onboarding_edit(params: dict) -> str:
         )
         resp.raise_for_status()
         return "Onboarding settings updated"
+
+
+async def handle_onboarding_create_prompt(params: dict) -> str:
+    payload = {
+        "title": params["title"],
+        "options": params["options"],
+    }
+    if params.get("single_select") is not None:
+        payload["single_select"] = params["single_select"]
+    if params.get("required") is not None:
+        payload["required"] = params["required"]
+    if params.get("in_onboarding") is not None:
+        payload["in_onboarding"] = params["in_onboarding"]
+    if params.get("type") is not None:
+        payload["type"] = params["type"]
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.post(
+            f"{BASE_URL}/guilds/{GUILD_ID}/onboarding/prompts",
+            headers=get_headers(),
+            json=payload,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        return f"Onboarding prompt created: {data.get('title')} (ID: {data.get('id')})"
 
 
 # ============================================================================
@@ -2553,6 +2580,7 @@ HANDLERS = {
     # Onboarding
     "onboarding.get": handle_onboarding_get,
     "onboarding.edit": handle_onboarding_edit,
+    "onboarding.create_prompt": handle_onboarding_create_prompt,
     # Welcome Screen
     "welcome_screen.get": handle_welcome_screen_get,
     "welcome_screen.edit": handle_welcome_screen_edit,
