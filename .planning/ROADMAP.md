@@ -29,10 +29,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. #verify channel exists with correct permissions (Unverified can view, Verified cannot)
   3. #security-logs channel exists and receives test events
   4. @Unverified and @Verified roles exist with correct permission hierarchy
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD during planning
+- [ ] 01-01-PLAN.md — Gateway bot with idempotent infrastructure
+- [ ] 01-02-PLAN.md — Railway deployment and verification
 
 ### Phase 2: Verification Gate
 **Goal**: New members must complete emoji challenge to access server
@@ -101,7 +102,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/0 | Not started | - |
+| 1. Foundation | 0/2 | Planning complete | - |
 | 2. Verification Gate | 0/0 | Not started | - |
 | 3. Account Restrictions | 0/0 | Not started | - |
 | 4. Raid Detection | 0/0 | Not started | - |
