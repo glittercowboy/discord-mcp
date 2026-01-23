@@ -1,0 +1,1028 @@
+{
+  "categories": {
+    "messages": {
+      "description": "Send, read, and manage messages",
+      "operations": {
+        "send": {
+          "description": "Send a message to a channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID to send message to"},
+            "content": {"type": "string", "required": true, "description": "Message content (max 2000 chars)"},
+            "reply_to": {"type": "string", "required": false, "description": "Message ID to reply to"}
+          }
+        },
+        "list": {
+          "description": "Get recent messages from a channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID to read from"},
+            "limit": {"type": "integer", "required": false, "description": "Number of messages (1-100, default 50)"}
+          }
+        },
+        "get": {
+          "description": "Get a specific message",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_id": {"type": "string", "required": true, "description": "Message ID"}
+          }
+        },
+        "delete": {
+          "description": "Delete a message",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_id": {"type": "string", "required": true, "description": "Message ID to delete"}
+          }
+        },
+        "bulk_delete": {
+          "description": "Delete multiple messages at once (2-100, max 14 days old)",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_ids": {"type": "array", "required": true, "description": "Array of message IDs to delete"}
+          }
+        },
+        "edit": {
+          "description": "Edit a message sent by the bot",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_id": {"type": "string", "required": true, "description": "Message ID"},
+            "content": {"type": "string", "required": true, "description": "New message content"}
+          }
+        },
+        "pin": {
+          "description": "Pin a message to the channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_id": {"type": "string", "required": true, "description": "Message ID to pin"}
+          }
+        },
+        "unpin": {
+          "description": "Unpin a message from the channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_id": {"type": "string", "required": true, "description": "Message ID to unpin"}
+          }
+        },
+        "list_pins": {
+          "description": "List pinned messages in a channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"}
+          }
+        }
+      }
+    },
+    "reactions": {
+      "description": "Add and manage reactions on messages",
+      "operations": {
+        "add": {
+          "description": "Add a reaction to a message",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_id": {"type": "string", "required": true, "description": "Message ID"},
+            "emoji": {"type": "string", "required": true, "description": "Emoji (unicode or custom format name:id)"}
+          }
+        },
+        "remove": {
+          "description": "Remove bot's reaction from a message",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_id": {"type": "string", "required": true, "description": "Message ID"},
+            "emoji": {"type": "string", "required": true, "description": "Emoji to remove"}
+          }
+        },
+        "remove_user": {
+          "description": "Remove another user's reaction",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_id": {"type": "string", "required": true, "description": "Message ID"},
+            "emoji": {"type": "string", "required": true, "description": "Emoji"},
+            "user_id": {"type": "string", "required": true, "description": "User ID"}
+          }
+        },
+        "remove_all": {
+          "description": "Remove all reactions from a message",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_id": {"type": "string", "required": true, "description": "Message ID"}
+          }
+        },
+        "list": {
+          "description": "Get users who reacted with an emoji",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_id": {"type": "string", "required": true, "description": "Message ID"},
+            "emoji": {"type": "string", "required": true, "description": "Emoji to check"}
+          }
+        }
+      }
+    },
+    "threads": {
+      "description": "Create and manage threads",
+      "operations": {
+        "create": {
+          "description": "Create a new thread from a message",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_id": {"type": "string", "required": false, "description": "Message ID to start thread from (omit for channel thread)"},
+            "name": {"type": "string", "required": true, "description": "Thread name"},
+            "auto_archive_duration": {"type": "integer", "required": false, "description": "Minutes until auto-archive (60, 1440, 4320, 10080)"}
+          }
+        },
+        "list": {
+          "description": "List active threads in a channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"}
+          }
+        },
+        "join": {
+          "description": "Join a thread",
+          "parameters": {
+            "thread_id": {"type": "string", "required": true, "description": "Thread ID to join"}
+          }
+        },
+        "leave": {
+          "description": "Leave a thread",
+          "parameters": {
+            "thread_id": {"type": "string", "required": true, "description": "Thread ID to leave"}
+          }
+        },
+        "add_member": {
+          "description": "Add a member to a thread",
+          "parameters": {
+            "thread_id": {"type": "string", "required": true, "description": "Thread ID"},
+            "user_id": {"type": "string", "required": true, "description": "User ID to add"}
+          }
+        },
+        "remove_member": {
+          "description": "Remove a member from a thread",
+          "parameters": {
+            "thread_id": {"type": "string", "required": true, "description": "Thread ID"},
+            "user_id": {"type": "string", "required": true, "description": "User ID to remove"}
+          }
+        },
+        "archive": {
+          "description": "Archive a thread",
+          "parameters": {
+            "thread_id": {"type": "string", "required": true, "description": "Thread ID to archive"}
+          }
+        },
+        "unarchive": {
+          "description": "Unarchive a thread",
+          "parameters": {
+            "thread_id": {"type": "string", "required": true, "description": "Thread ID to unarchive"}
+          }
+        },
+        "lock": {
+          "description": "Lock a thread (only mods can unarchive)",
+          "parameters": {
+            "thread_id": {"type": "string", "required": true, "description": "Thread ID to lock"}
+          }
+        },
+        "delete": {
+          "description": "Delete a thread",
+          "parameters": {
+            "thread_id": {"type": "string", "required": true, "description": "Thread ID to delete"}
+          }
+        }
+      }
+    },
+    "channels": {
+      "description": "Create and manage channels",
+      "operations": {
+        "list": {
+          "description": "List all channels in the server",
+          "parameters": {}
+        },
+        "get": {
+          "description": "Get details about a specific channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"}
+          }
+        },
+        "create": {
+          "description": "Create a new channel",
+          "parameters": {
+            "name": {"type": "string", "required": true, "description": "Channel name"},
+            "type": {"type": "integer", "required": false, "description": "Channel type: 0=text, 2=voice, 4=category, 5=announcement, 13=stage, 15=forum"},
+            "topic": {"type": "string", "required": false, "description": "Channel topic (text channels)"},
+            "parent_id": {"type": "string", "required": false, "description": "Category ID to place channel in"},
+            "nsfw": {"type": "boolean", "required": false, "description": "Mark as NSFW"},
+            "slowmode": {"type": "integer", "required": false, "description": "Slowmode in seconds (0-21600)"}
+          }
+        },
+        "edit": {
+          "description": "Edit a channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "name": {"type": "string", "required": false, "description": "New channel name"},
+            "topic": {"type": "string", "required": false, "description": "New topic"},
+            "nsfw": {"type": "boolean", "required": false, "description": "NSFW status"},
+            "slowmode": {"type": "integer", "required": false, "description": "Slowmode in seconds"},
+            "parent_id": {"type": "string", "required": false, "description": "Move to category"}
+          }
+        },
+        "delete": {
+          "description": "Delete a channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID to delete"}
+          }
+        },
+        "set_permissions": {
+          "description": "Set permission overwrites for a role/user on a channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "target_id": {"type": "string", "required": true, "description": "Role or User ID"},
+            "target_type": {"type": "string", "required": true, "description": "'role' or 'member'"},
+            "allow": {"type": "string", "required": false, "description": "Permission bits to allow"},
+            "deny": {"type": "string", "required": false, "description": "Permission bits to deny"}
+          }
+        },
+        "delete_permissions": {
+          "description": "Delete permission overwrites for a role/user",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "target_id": {"type": "string", "required": true, "description": "Role or User ID"}
+          }
+        }
+      }
+    },
+    "members": {
+      "description": "Manage server members",
+      "operations": {
+        "list": {
+          "description": "List server members",
+          "parameters": {
+            "limit": {"type": "integer", "required": false, "description": "Number of members (1-1000, default 100)"}
+          }
+        },
+        "get": {
+          "description": "Get details about a specific member",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID"}
+          }
+        },
+        "search": {
+          "description": "Search members by username",
+          "parameters": {
+            "query": {"type": "string", "required": true, "description": "Username to search"},
+            "limit": {"type": "integer", "required": false, "description": "Max results (1-1000, default 100)"}
+          }
+        },
+        "edit": {
+          "description": "Edit a member (nickname, roles, etc)",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID"},
+            "nick": {"type": "string", "required": false, "description": "New nickname (empty string to remove)"},
+            "mute": {"type": "boolean", "required": false, "description": "Server mute"},
+            "deaf": {"type": "boolean", "required": false, "description": "Server deafen"}
+          }
+        },
+        "add_role": {
+          "description": "Add a role to a member",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID"},
+            "role_id": {"type": "string", "required": true, "description": "Role ID to add"}
+          }
+        },
+        "remove_role": {
+          "description": "Remove a role from a member",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID"},
+            "role_id": {"type": "string", "required": true, "description": "Role ID to remove"}
+          }
+        }
+      }
+    },
+    "moderation": {
+      "description": "Moderate members (kick, ban, timeout)",
+      "operations": {
+        "kick": {
+          "description": "Kick a member from the server",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID to kick"},
+            "reason": {"type": "string", "required": false, "description": "Reason for kick (audit log)"}
+          }
+        },
+        "ban": {
+          "description": "Ban a member from the server",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID to ban"},
+            "reason": {"type": "string", "required": false, "description": "Reason for ban (audit log)"},
+            "delete_message_days": {"type": "integer", "required": false, "description": "Days of messages to delete (0-7)"}
+          }
+        },
+        "unban": {
+          "description": "Unban a user",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID to unban"}
+          }
+        },
+        "list_bans": {
+          "description": "List all banned users",
+          "parameters": {
+            "limit": {"type": "integer", "required": false, "description": "Max results (default 100)"}
+          }
+        },
+        "get_ban": {
+          "description": "Get ban info for a user",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID"}
+          }
+        },
+        "timeout": {
+          "description": "Timeout a member (prevent them from interacting)",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID"},
+            "duration_seconds": {"type": "integer", "required": true, "description": "Timeout duration in seconds (max 28 days)"},
+            "reason": {"type": "string", "required": false, "description": "Reason (audit log)"}
+          }
+        },
+        "remove_timeout": {
+          "description": "Remove timeout from a member",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID"}
+          }
+        }
+      }
+    },
+    "roles": {
+      "description": "Create and manage roles",
+      "operations": {
+        "list": {
+          "description": "List all roles in the server",
+          "parameters": {}
+        },
+        "get": {
+          "description": "Get a specific role",
+          "parameters": {
+            "role_id": {"type": "string", "required": true, "description": "Role ID"}
+          }
+        },
+        "create": {
+          "description": "Create a new role",
+          "parameters": {
+            "name": {"type": "string", "required": true, "description": "Role name"},
+            "color": {"type": "integer", "required": false, "description": "RGB color integer"},
+            "hoist": {"type": "boolean", "required": false, "description": "Show separately in member list"},
+            "mentionable": {"type": "boolean", "required": false, "description": "Allow anyone to @mention"},
+            "permissions": {"type": "string", "required": false, "description": "Permission bits"}
+          }
+        },
+        "edit": {
+          "description": "Edit a role",
+          "parameters": {
+            "role_id": {"type": "string", "required": true, "description": "Role ID"},
+            "name": {"type": "string", "required": false, "description": "New name"},
+            "color": {"type": "integer", "required": false, "description": "RGB color integer"},
+            "hoist": {"type": "boolean", "required": false, "description": "Show separately"},
+            "mentionable": {"type": "boolean", "required": false, "description": "Mentionable"},
+            "permissions": {"type": "string", "required": false, "description": "Permission bits"}
+          }
+        },
+        "delete": {
+          "description": "Delete a role",
+          "parameters": {
+            "role_id": {"type": "string", "required": true, "description": "Role ID to delete"}
+          }
+        }
+      }
+    },
+    "invites": {
+      "description": "Create and manage server invites",
+      "operations": {
+        "list": {
+          "description": "List all active invites",
+          "parameters": {}
+        },
+        "create": {
+          "description": "Create an invite for a channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "max_age": {"type": "integer", "required": false, "description": "Seconds until expiry (0 = never)"},
+            "max_uses": {"type": "integer", "required": false, "description": "Max uses (0 = unlimited)"},
+            "unique": {"type": "boolean", "required": false, "description": "Always create new invite"}
+          }
+        },
+        "get": {
+          "description": "Get invite details",
+          "parameters": {
+            "invite_code": {"type": "string", "required": true, "description": "Invite code"}
+          }
+        },
+        "delete": {
+          "description": "Delete/revoke an invite",
+          "parameters": {
+            "invite_code": {"type": "string", "required": true, "description": "Invite code to revoke"}
+          }
+        }
+      }
+    },
+    "events": {
+      "description": "Create and manage scheduled events",
+      "operations": {
+        "list": {
+          "description": "List scheduled events",
+          "parameters": {}
+        },
+        "get": {
+          "description": "Get a scheduled event",
+          "parameters": {
+            "event_id": {"type": "string", "required": true, "description": "Event ID"}
+          }
+        },
+        "create": {
+          "description": "Create a scheduled event",
+          "parameters": {
+            "name": {"type": "string", "required": true, "description": "Event name"},
+            "description": {"type": "string", "required": false, "description": "Event description"},
+            "start_time": {"type": "string", "required": true, "description": "ISO8601 start time"},
+            "end_time": {"type": "string", "required": false, "description": "ISO8601 end time"},
+            "location": {"type": "string", "required": false, "description": "Location (for external events)"},
+            "channel_id": {"type": "string", "required": false, "description": "Voice/Stage channel ID (for voice events)"}
+          }
+        },
+        "edit": {
+          "description": "Edit a scheduled event",
+          "parameters": {
+            "event_id": {"type": "string", "required": true, "description": "Event ID"},
+            "name": {"type": "string", "required": false, "description": "Event name"},
+            "description": {"type": "string", "required": false, "description": "Description"},
+            "start_time": {"type": "string", "required": false, "description": "ISO8601 start time"},
+            "end_time": {"type": "string", "required": false, "description": "ISO8601 end time"},
+            "status": {"type": "integer", "required": false, "description": "1=scheduled, 2=active, 3=completed, 4=canceled"}
+          }
+        },
+        "delete": {
+          "description": "Delete a scheduled event",
+          "parameters": {
+            "event_id": {"type": "string", "required": true, "description": "Event ID to delete"}
+          }
+        },
+        "list_users": {
+          "description": "List users interested in an event",
+          "parameters": {
+            "event_id": {"type": "string", "required": true, "description": "Event ID"}
+          }
+        }
+      }
+    },
+    "polls": {
+      "description": "Create polls in channels",
+      "operations": {
+        "create": {
+          "description": "Create a poll message",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "question": {"type": "string", "required": true, "description": "Poll question"},
+            "answers": {"type": "array", "required": true, "description": "Array of answer strings (2-10 options)"},
+            "duration_hours": {"type": "integer", "required": false, "description": "Poll duration in hours (1-768, default 24)"},
+            "allow_multiselect": {"type": "boolean", "required": false, "description": "Allow multiple answers (default false)"}
+          }
+        },
+        "end": {
+          "description": "End a poll early",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "message_id": {"type": "string", "required": true, "description": "Poll message ID"}
+          }
+        }
+      }
+    },
+    "guild": {
+      "description": "Server settings and information",
+      "operations": {
+        "get": {
+          "description": "Get server information",
+          "parameters": {}
+        },
+        "edit": {
+          "description": "Edit server settings",
+          "parameters": {
+            "name": {"type": "string", "required": false, "description": "Server name"},
+            "description": {"type": "string", "required": false, "description": "Server description"},
+            "verification_level": {"type": "integer", "required": false, "description": "0=none, 1=low, 2=medium, 3=high, 4=very high"},
+            "default_message_notifications": {"type": "integer", "required": false, "description": "0=all, 1=mentions only"},
+            "explicit_content_filter": {"type": "integer", "required": false, "description": "0=disabled, 1=no roles, 2=all"},
+            "afk_channel_id": {"type": "string", "required": false, "description": "AFK voice channel ID"},
+            "afk_timeout": {"type": "integer", "required": false, "description": "AFK timeout in seconds"},
+            "system_channel_id": {"type": "string", "required": false, "description": "System messages channel"}
+          }
+        },
+        "get_prune_count": {
+          "description": "Get number of members that would be pruned",
+          "parameters": {
+            "days": {"type": "integer", "required": true, "description": "Days of inactivity (1-30)"}
+          }
+        },
+        "prune": {
+          "description": "Prune inactive members",
+          "parameters": {
+            "days": {"type": "integer", "required": true, "description": "Days of inactivity (1-30)"},
+            "compute_prune_count": {"type": "boolean", "required": false, "description": "Return number pruned"}
+          }
+        }
+      }
+    },
+    "audit_log": {
+      "description": "View server audit log",
+      "operations": {
+        "list": {
+          "description": "Get audit log entries",
+          "parameters": {
+            "user_id": {"type": "string", "required": false, "description": "Filter by user who performed action"},
+            "action_type": {"type": "integer", "required": false, "description": "Filter by action type"},
+            "limit": {"type": "integer", "required": false, "description": "Max entries (1-100, default 50)"}
+          }
+        }
+      }
+    },
+    "automod": {
+      "description": "Manage auto-moderation rules",
+      "operations": {
+        "list": {
+          "description": "List all automod rules",
+          "parameters": {}
+        },
+        "get": {
+          "description": "Get an automod rule",
+          "parameters": {
+            "rule_id": {"type": "string", "required": true, "description": "Rule ID"}
+          }
+        },
+        "create": {
+          "description": "Create an automod rule",
+          "parameters": {
+            "name": {"type": "string", "required": true, "description": "Rule name"},
+            "event_type": {"type": "integer", "required": true, "description": "1=message_send"},
+            "trigger_type": {"type": "integer", "required": true, "description": "1=keyword, 3=spam, 4=keyword_preset, 5=mention_spam"},
+            "trigger_metadata": {"type": "object", "required": false, "description": "Trigger config (keyword_filter, presets, etc)"},
+            "actions": {"type": "array", "required": true, "description": "Actions to take (block, alert, timeout)"},
+            "enabled": {"type": "boolean", "required": false, "description": "Enable rule (default true)"},
+            "exempt_roles": {"type": "array", "required": false, "description": "Role IDs exempt from rule"},
+            "exempt_channels": {"type": "array", "required": false, "description": "Channel IDs exempt from rule"}
+          }
+        },
+        "edit": {
+          "description": "Edit an automod rule",
+          "parameters": {
+            "rule_id": {"type": "string", "required": true, "description": "Rule ID"},
+            "name": {"type": "string", "required": false, "description": "Rule name"},
+            "trigger_metadata": {"type": "object", "required": false, "description": "Trigger config"},
+            "actions": {"type": "array", "required": false, "description": "Actions"},
+            "enabled": {"type": "boolean", "required": false, "description": "Enable/disable"},
+            "exempt_roles": {"type": "array", "required": false, "description": "Exempt roles"},
+            "exempt_channels": {"type": "array", "required": false, "description": "Exempt channels"}
+          }
+        },
+        "delete": {
+          "description": "Delete an automod rule",
+          "parameters": {
+            "rule_id": {"type": "string", "required": true, "description": "Rule ID to delete"}
+          }
+        }
+      }
+    },
+    "webhooks": {
+      "description": "Manage and use webhooks",
+      "operations": {
+        "list_guild": {
+          "description": "List all webhooks in the server",
+          "parameters": {}
+        },
+        "list_channel": {
+          "description": "List webhooks in a channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"}
+          }
+        },
+        "create": {
+          "description": "Create a webhook",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "name": {"type": "string", "required": true, "description": "Webhook name"}
+          }
+        },
+        "get": {
+          "description": "Get a webhook",
+          "parameters": {
+            "webhook_id": {"type": "string", "required": true, "description": "Webhook ID"}
+          }
+        },
+        "edit": {
+          "description": "Edit a webhook",
+          "parameters": {
+            "webhook_id": {"type": "string", "required": true, "description": "Webhook ID"},
+            "name": {"type": "string", "required": false, "description": "New name"},
+            "channel_id": {"type": "string", "required": false, "description": "Move to channel"}
+          }
+        },
+        "delete": {
+          "description": "Delete a webhook",
+          "parameters": {
+            "webhook_id": {"type": "string", "required": true, "description": "Webhook ID to delete"}
+          }
+        },
+        "send": {
+          "description": "Send a message via webhook URL",
+          "parameters": {
+            "webhook_url": {"type": "string", "required": true, "description": "Full webhook URL"},
+            "content": {"type": "string", "required": false, "description": "Message content"},
+            "username": {"type": "string", "required": false, "description": "Override webhook username"},
+            "avatar_url": {"type": "string", "required": false, "description": "Override webhook avatar"}
+          }
+        }
+      }
+    },
+    "voice": {
+      "description": "Voice channel controls",
+      "operations": {
+        "move_member": {
+          "description": "Move a member to a voice channel",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID"},
+            "channel_id": {"type": "string", "required": true, "description": "Voice channel ID to move to"}
+          }
+        },
+        "disconnect_member": {
+          "description": "Disconnect a member from voice",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID to disconnect"}
+          }
+        }
+      }
+    },
+    "emojis": {
+      "description": "Manage server emojis",
+      "operations": {
+        "list": {
+          "description": "List all server emojis",
+          "parameters": {}
+        },
+        "get": {
+          "description": "Get an emoji",
+          "parameters": {
+            "emoji_id": {"type": "string", "required": true, "description": "Emoji ID"}
+          }
+        },
+        "create": {
+          "description": "Create a custom emoji",
+          "parameters": {
+            "name": {"type": "string", "required": true, "description": "Emoji name"},
+            "image_url": {"type": "string", "required": true, "description": "Image URL (will be downloaded and base64 encoded)"}
+          }
+        },
+        "edit": {
+          "description": "Edit an emoji",
+          "parameters": {
+            "emoji_id": {"type": "string", "required": true, "description": "Emoji ID"},
+            "name": {"type": "string", "required": true, "description": "New name"}
+          }
+        },
+        "delete": {
+          "description": "Delete an emoji",
+          "parameters": {
+            "emoji_id": {"type": "string", "required": true, "description": "Emoji ID to delete"}
+          }
+        }
+      }
+    },
+    "stickers": {
+      "description": "Manage server stickers",
+      "operations": {
+        "list": {
+          "description": "List all server stickers",
+          "parameters": {}
+        },
+        "get": {
+          "description": "Get a sticker",
+          "parameters": {
+            "sticker_id": {"type": "string", "required": true, "description": "Sticker ID"}
+          }
+        },
+        "delete": {
+          "description": "Delete a sticker",
+          "parameters": {
+            "sticker_id": {"type": "string", "required": true, "description": "Sticker ID to delete"}
+          }
+        }
+      }
+    },
+    "forum": {
+      "description": "Manage forum channels and posts",
+      "operations": {
+        "create_post": {
+          "description": "Create a new forum post (thread)",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Forum channel ID"},
+            "name": {"type": "string", "required": true, "description": "Post title"},
+            "content": {"type": "string", "required": true, "description": "Initial message content"},
+            "applied_tags": {"type": "array", "required": false, "description": "Array of tag IDs to apply"}
+          }
+        },
+        "list_tags": {
+          "description": "List available tags in a forum channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Forum channel ID"}
+          }
+        },
+        "create_tag": {
+          "description": "Create a new tag in a forum channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Forum channel ID"},
+            "name": {"type": "string", "required": true, "description": "Tag name"},
+            "moderated": {"type": "boolean", "required": false, "description": "Only mods can apply this tag"},
+            "emoji_name": {"type": "string", "required": false, "description": "Unicode emoji for tag"}
+          }
+        },
+        "edit_tag": {
+          "description": "Edit a forum tag",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Forum channel ID"},
+            "tag_id": {"type": "string", "required": true, "description": "Tag ID"},
+            "name": {"type": "string", "required": false, "description": "New tag name"},
+            "moderated": {"type": "boolean", "required": false, "description": "Moderated status"}
+          }
+        },
+        "delete_tag": {
+          "description": "Delete a forum tag",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Forum channel ID"},
+            "tag_id": {"type": "string", "required": true, "description": "Tag ID to delete"}
+          }
+        }
+      }
+    },
+    "stage": {
+      "description": "Manage stage channels and instances",
+      "operations": {
+        "create_instance": {
+          "description": "Start a stage instance (go live)",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Stage channel ID"},
+            "topic": {"type": "string", "required": true, "description": "Stage topic"},
+            "privacy_level": {"type": "integer", "required": false, "description": "2=guild only (default)"}
+          }
+        },
+        "get_instance": {
+          "description": "Get current stage instance",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Stage channel ID"}
+          }
+        },
+        "edit_instance": {
+          "description": "Edit stage instance topic",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Stage channel ID"},
+            "topic": {"type": "string", "required": true, "description": "New topic"}
+          }
+        },
+        "delete_instance": {
+          "description": "End a stage instance",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Stage channel ID"}
+          }
+        },
+        "invite_speaker": {
+          "description": "Invite a user to speak on stage",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Stage channel ID"},
+            "user_id": {"type": "string", "required": true, "description": "User ID to invite"}
+          }
+        },
+        "move_to_audience": {
+          "description": "Move a speaker back to audience",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Stage channel ID"},
+            "user_id": {"type": "string", "required": true, "description": "User ID to move"}
+          }
+        }
+      }
+    },
+    "onboarding": {
+      "description": "Manage server onboarding for new members",
+      "operations": {
+        "get": {
+          "description": "Get server onboarding configuration",
+          "parameters": {}
+        },
+        "edit": {
+          "description": "Edit server onboarding settings",
+          "parameters": {
+            "prompts": {"type": "array", "required": false, "description": "Array of onboarding prompts"},
+            "default_channel_ids": {"type": "array", "required": false, "description": "Default channels shown to new members"},
+            "enabled": {"type": "boolean", "required": false, "description": "Enable/disable onboarding"}
+          }
+        }
+      }
+    },
+    "welcome_screen": {
+      "description": "Manage server welcome screen",
+      "operations": {
+        "get": {
+          "description": "Get welcome screen settings",
+          "parameters": {}
+        },
+        "edit": {
+          "description": "Edit welcome screen",
+          "parameters": {
+            "enabled": {"type": "boolean", "required": false, "description": "Enable/disable welcome screen"},
+            "description": {"type": "string", "required": false, "description": "Welcome screen description"},
+            "welcome_channels": {"type": "array", "required": false, "description": "Array of {channel_id, description, emoji_name}"}
+          }
+        }
+      }
+    },
+    "soundboard": {
+      "description": "Manage server soundboard sounds",
+      "operations": {
+        "list": {
+          "description": "List all soundboard sounds",
+          "parameters": {}
+        },
+        "get": {
+          "description": "Get a soundboard sound",
+          "parameters": {
+            "sound_id": {"type": "string", "required": true, "description": "Sound ID"}
+          }
+        },
+        "create": {
+          "description": "Create a soundboard sound",
+          "parameters": {
+            "name": {"type": "string", "required": true, "description": "Sound name"},
+            "sound_url": {"type": "string", "required": true, "description": "URL to MP3/OGG file"},
+            "volume": {"type": "number", "required": false, "description": "Volume 0-1 (default 1)"},
+            "emoji_name": {"type": "string", "required": false, "description": "Emoji for the sound"}
+          }
+        },
+        "edit": {
+          "description": "Edit a soundboard sound",
+          "parameters": {
+            "sound_id": {"type": "string", "required": true, "description": "Sound ID"},
+            "name": {"type": "string", "required": false, "description": "New name"},
+            "volume": {"type": "number", "required": false, "description": "Volume 0-1"},
+            "emoji_name": {"type": "string", "required": false, "description": "Emoji"}
+          }
+        },
+        "delete": {
+          "description": "Delete a soundboard sound",
+          "parameters": {
+            "sound_id": {"type": "string", "required": true, "description": "Sound ID to delete"}
+          }
+        }
+      }
+    },
+    "commands": {
+      "description": "Manage bot application commands (slash commands)",
+      "operations": {
+        "list_global": {
+          "description": "List global application commands",
+          "parameters": {}
+        },
+        "list_guild": {
+          "description": "List guild-specific commands",
+          "parameters": {}
+        },
+        "create": {
+          "description": "Create a slash command",
+          "parameters": {
+            "name": {"type": "string", "required": true, "description": "Command name (lowercase, no spaces)"},
+            "description": {"type": "string", "required": true, "description": "Command description"},
+            "options": {"type": "array", "required": false, "description": "Command options/parameters"},
+            "guild_only": {"type": "boolean", "required": false, "description": "Create as guild command (default true)"}
+          }
+        },
+        "edit": {
+          "description": "Edit a command",
+          "parameters": {
+            "command_id": {"type": "string", "required": true, "description": "Command ID"},
+            "name": {"type": "string", "required": false, "description": "New name"},
+            "description": {"type": "string", "required": false, "description": "New description"},
+            "options": {"type": "array", "required": false, "description": "New options"}
+          }
+        },
+        "delete": {
+          "description": "Delete a command",
+          "parameters": {
+            "command_id": {"type": "string", "required": true, "description": "Command ID to delete"},
+            "guild_only": {"type": "boolean", "required": false, "description": "Delete guild command (default true)"}
+          }
+        }
+      }
+    },
+    "integrations": {
+      "description": "Manage server integrations (connected apps)",
+      "operations": {
+        "list": {
+          "description": "List all integrations",
+          "parameters": {}
+        },
+        "delete": {
+          "description": "Delete an integration",
+          "parameters": {
+            "integration_id": {"type": "string", "required": true, "description": "Integration ID to delete"}
+          }
+        }
+      }
+    },
+    "widget": {
+      "description": "Manage server widget settings",
+      "operations": {
+        "get": {
+          "description": "Get widget settings",
+          "parameters": {}
+        },
+        "get_data": {
+          "description": "Get widget JSON data (public info)",
+          "parameters": {}
+        },
+        "edit": {
+          "description": "Edit widget settings",
+          "parameters": {
+            "enabled": {"type": "boolean", "required": false, "description": "Enable/disable widget"},
+            "channel_id": {"type": "string", "required": false, "description": "Widget invite channel"}
+          }
+        }
+      }
+    },
+    "vanity": {
+      "description": "Manage vanity invite URL (requires boost level)",
+      "operations": {
+        "get": {
+          "description": "Get current vanity URL",
+          "parameters": {}
+        },
+        "edit": {
+          "description": "Set vanity URL code",
+          "parameters": {
+            "code": {"type": "string", "required": true, "description": "Vanity code (e.g., 'myserver')"}
+          }
+        }
+      }
+    },
+    "templates": {
+      "description": "Manage server templates",
+      "operations": {
+        "list": {
+          "description": "List server templates",
+          "parameters": {}
+        },
+        "get": {
+          "description": "Get a template",
+          "parameters": {
+            "template_code": {"type": "string", "required": true, "description": "Template code"}
+          }
+        },
+        "create": {
+          "description": "Create a template from this server",
+          "parameters": {
+            "name": {"type": "string", "required": true, "description": "Template name"},
+            "description": {"type": "string", "required": false, "description": "Template description"}
+          }
+        },
+        "sync": {
+          "description": "Sync template with current server state",
+          "parameters": {
+            "template_code": {"type": "string", "required": true, "description": "Template code to sync"}
+          }
+        },
+        "edit": {
+          "description": "Edit template metadata",
+          "parameters": {
+            "template_code": {"type": "string", "required": true, "description": "Template code"},
+            "name": {"type": "string", "required": false, "description": "New name"},
+            "description": {"type": "string", "required": false, "description": "New description"}
+          }
+        },
+        "delete": {
+          "description": "Delete a template",
+          "parameters": {
+            "template_code": {"type": "string", "required": true, "description": "Template code to delete"}
+          }
+        }
+      }
+    },
+    "dm": {
+      "description": "Send direct messages to users",
+      "operations": {
+        "send": {
+          "description": "Send a DM to a user",
+          "parameters": {
+            "user_id": {"type": "string", "required": true, "description": "User ID to DM"},
+            "content": {"type": "string", "required": true, "description": "Message content"}
+          }
+        }
+      }
+    },
+    "bulk_ban": {
+      "description": "Bulk ban multiple users",
+      "operations": {
+        "execute": {
+          "description": "Ban multiple users at once",
+          "parameters": {
+            "user_ids": {"type": "array", "required": true, "description": "Array of user IDs to ban (max 200)"},
+            "delete_message_seconds": {"type": "integer", "required": false, "description": "Seconds of messages to delete (max 604800 = 7 days)"},
+            "reason": {"type": "string", "required": false, "description": "Reason for ban (audit log)"}
+          }
+        }
+      }
+    }
+  }
+}
