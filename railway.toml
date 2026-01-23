@@ -2,7 +2,7 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "python -m guardian.guardian"
+startCommand = "cd src && python -m guardian.guardian"
 healthcheckPath = ""
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
