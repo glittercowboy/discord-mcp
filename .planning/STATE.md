@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 Phase: 4 of 5 (Raid Detection)
 Plan: 5 of 5 in current phase (including gap closure plans)
 Status: Phase complete
-Last activity: 2026-01-24 — Completed 04-05-PLAN.md (gap closure)
+Last activity: 2026-01-24 — Completed 04-04-PLAN.md (gap closure: auto-recovery)
 
 Progress: [████████░░] 82%
 
@@ -33,7 +33,7 @@ Progress: [████████░░] 82%
 | 04-raid-detection | 5 | 9min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (3min), 04-02 (1min), 04-03 (2min), 04-04 (<1min), 04-05 (3min)
+- Last 5 plans: 04-01 (3min), 04-02 (1min), 04-03 (2min), 04-05 (3min), 04-04 (2min)
 - Trend: Gap closure plans execute quickly with focused scope
 
 *Updated after each plan completion*
@@ -79,6 +79,7 @@ Recent decisions affecting current work:
 - Dynamic import for lockdown commands (04-03) — Avoid circular import by importing guardian inside function
 - Administrator permission for lockdown (04-03) — Higher impact than single-member moderation
 - Ephemeral moderation responses (04-03) — Privacy for mod actions, audit trail in #security-logs
+- Client injection for async tasks (04-04) — Pass Discord client at manager instantiation for guild lookups
 
 ### Pending Todos
 
@@ -91,5 +92,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 04-05-PLAN.md (gap closure)
+Stopped at: Completed 04-04-PLAN.md (gap closure: auto-recovery)
 Resume file: None
