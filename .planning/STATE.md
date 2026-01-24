@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 4 of 5 (Raid Detection)
-Plan: 0 of 0 in current phase (not yet planned)
-Status: Ready to plan
-Last activity: 2026-01-24 — Phase 3 complete
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-01-24 — Completed 04-01-PLAN.md
 
-Progress: [██████░░░░] 60%
+Progress: [███████░░░] 70%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 9 min
-- Total execution time: 88 min
+- Total execution time: 91 min
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [██████░░░░] 60%
 | 01-foundation | 2 | 20min | 10min |
 | 02-verification-gate | 4 | 60min | 15min |
 | 03-account-restrictions | 3 | 28min | 9min |
+| 04-raid-detection | 1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 02-04 (45min manual), 03-01 (2min), 03-02 (2min), 03-03 (24min debugging)
-- Trend: Slash command sync required debugging (CommandTree attachment, guild-only sync)
+- Last 5 plans: 03-01 (2min), 03-02 (2min), 03-03 (24min debugging), 04-01 (3min)
+- Trend: Infrastructure plans execute quickly, integration plans require debugging
 
 *Updated after each plan completion*
 
@@ -67,6 +68,11 @@ Recent decisions affecting current work:
 - Silent deletion + DM (03-02) — Reduce public friction, educate users
 - CommandTree at client.tree (03-03) — Required for discord.py slash command registration
 - Guild-only sync with clear_commands (03-03) — Prevents duplicate commands, instant propagation
+- Deque-based sliding window (04-01) — O(1) append/popleft vs O(n) list operations for join tracking
+- 5-second slowmode during lockdown (04-01) — Balance between rate limiting and usability
+- Exclude verify/security-logs from slowmode (04-01) — Operational channels remain functional during raid
+- 15-minute auto-recovery default (04-01) — Most raids conclude quickly, prevents indefinite lockdown
+- Immediate moderation logging (04-01) — No audit log delay, complete data at call site
 
 ### Pending Todos
 
@@ -79,5 +85,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Phase 3 complete
+Stopped at: Completed 04-01-PLAN.md
 Resume file: None
