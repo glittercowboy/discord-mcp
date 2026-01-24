@@ -1035,6 +1035,35 @@
           }
         }
       }
+    },
+    "batch": {
+      "description": "Batch operations for bulk actions with rate limit handling",
+      "operations": {
+        "members.add_role": {
+          "description": "Add a role to multiple members",
+          "parameters": {
+            "role_id": {"type": "string", "required": true, "description": "Role ID to add"},
+            "member_ids": {"type": "array", "required": true, "description": "Array of member/user IDs"}
+          }
+        },
+        "members.remove_role": {
+          "description": "Remove a role from multiple members",
+          "parameters": {
+            "role_id": {"type": "string", "required": true, "description": "Role ID to remove"},
+            "member_ids": {"type": "array", "required": true, "description": "Array of member/user IDs"}
+          }
+        },
+        "channels.set_permissions": {
+          "description": "Set permission overwrite on multiple channels",
+          "parameters": {
+            "channel_ids": {"type": "array", "required": true, "description": "Array of channel IDs"},
+            "target_id": {"type": "string", "required": true, "description": "Role or User ID to set permissions for"},
+            "target_type": {"type": "string", "required": true, "description": "'role' or 'member'"},
+            "allow": {"type": "string", "required": false, "description": "Permission bits to allow"},
+            "deny": {"type": "string", "required": false, "description": "Permission bits to deny"}
+          }
+        }
+      }
     }
   }
 }

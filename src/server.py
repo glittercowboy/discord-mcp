@@ -1,11 +1,15 @@
 """Discord MCP Server - Full admin control over Discord communities."""
 
+import asyncio
 import base64
 import json
 import os
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import quote
+
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).parent.parent / ".env", override=True)
 
 import httpx
 from mcp.server.fastmcp import FastMCP
@@ -172,13 +176,19 @@ def discord_get_schema(operation: str) -> str:
     """Get detailed parameter schema for a specific operation.
 
     Args:
-        operation: Operation identifier (e.g., 'messages.send', 'members.list')
+        operation: Operation identifier (e.g., 'messages.send', 'members.list') or 'batch.category.action' for batch operations (e.g., 'batch.members.add_role')
     """
     parts = operation.split(".")
-    if len(parts) != 2:
-        return f"Invalid operation format: {operation}. Use 'category.operation' format."
 
-    cat_name, op_name = parts
+    # Handle batch operations (batch.category.action)
+    if len(parts) == 3 and parts[0] == "batch":
+        cat_name = "batch"
+        op_name = f"{parts[1]}.{parts[2]}"
+    elif len(parts) == 2:
+        cat_name, op_name = parts
+    else:
+        return f"Invalid operation format: {operation}. Use 'category.operation' or 'batch.category.action' format."
+
     if cat_name not in OPERATIONS["categories"]:
         return f"Unknown category: {cat_name}. Use discord_discover to see categories."
 
@@ -205,17 +215,21 @@ async def discord_execute(operation: str, params: dict) -> str:
     """Execute a Discord operation with specified parameters.
 
     Args:
-        operation: Operation identifier (e.g., 'messages.send', 'members.list')
+        operation: Operation identifier (e.g., 'messages.send', 'members.list') or 'batch.category.action' for batch operations
         params: Operation parameters (get schema first)
     """
     parts = operation.split(".")
-    if len(parts) != 2:
+
+    # Handle batch operations (batch.category.action)
+    if len(parts) == 3 and parts[0] == "batch":
+        handler_key = f"batch.{parts[1]}.{parts[2]}"
+    elif len(parts) == 2:
+        handler_key = f"{parts[0]}.{parts[1]}"
+    else:
         return f"Invalid operation format: {operation}"
 
-    cat_name, op_name = parts
-
     # Route to handler
-    handler = HANDLERS.get(f"{cat_name}.{op_name}")
+    handler = HANDLERS.get(handler_key)
     if not handler:
         return f"No handler for operation: {operation}"
 
@@ -2455,6 +2469,133 @@ async def handle_bulk_ban_execute(params: dict) -> str:
 
 
 # ============================================================================
+# BATCH HANDLERS
+# ============================================================================
+
+BATCH_CONCURRENCY = 10
+BATCH_DELAY_MS = 50
+
+
+async def handle_batch_members_add_role(params: dict) -> str:
+    role_id = params["role_id"]
+    member_ids = params["member_ids"]
+
+    success = 0
+    failed = 0
+    errors = []
+    semaphore = asyncio.Semaphore(BATCH_CONCURRENCY)
+
+    async def add_role_to_member(member_id: str) -> None:
+        nonlocal success, failed
+        async with semaphore:
+            try:
+                async with httpx.AsyncClient() as client:
+                    resp = await client.put(
+                        f"{BASE_URL}/guilds/{GUILD_ID}/members/{member_id}/roles/{role_id}",
+                        headers=get_headers(),
+                    )
+                    resp.raise_for_status()
+                    success += 1
+            except httpx.HTTPStatusError as e:
+                failed += 1
+                try:
+                    detail = e.response.json().get("message", e.response.text)
+                except Exception:
+                    detail = e.response.text
+                errors.append({"member_id": member_id, "error": f"HTTP {e.response.status_code}: {detail}"})
+            except Exception as e:
+                failed += 1
+                errors.append({"member_id": member_id, "error": str(e)})
+            await asyncio.sleep(BATCH_DELAY_MS / 1000)
+
+    await asyncio.gather(*[add_role_to_member(m) for m in member_ids])
+
+    return json.dumps({"success": success, "failed": failed, "errors": errors}, indent=2)
+
+
+async def handle_batch_members_remove_role(params: dict) -> str:
+    role_id = params["role_id"]
+    member_ids = params["member_ids"]
+
+    success = 0
+    failed = 0
+    errors = []
+    semaphore = asyncio.Semaphore(BATCH_CONCURRENCY)
+
+    async def remove_role_from_member(member_id: str) -> None:
+        nonlocal success, failed
+        async with semaphore:
+            try:
+                async with httpx.AsyncClient() as client:
+                    resp = await client.delete(
+                        f"{BASE_URL}/guilds/{GUILD_ID}/members/{member_id}/roles/{role_id}",
+                        headers=get_headers(),
+                    )
+                    resp.raise_for_status()
+                    success += 1
+            except httpx.HTTPStatusError as e:
+                failed += 1
+                try:
+                    detail = e.response.json().get("message", e.response.text)
+                except Exception:
+                    detail = e.response.text
+                errors.append({"member_id": member_id, "error": f"HTTP {e.response.status_code}: {detail}"})
+            except Exception as e:
+                failed += 1
+                errors.append({"member_id": member_id, "error": str(e)})
+            await asyncio.sleep(BATCH_DELAY_MS / 1000)
+
+    await asyncio.gather(*[remove_role_from_member(m) for m in member_ids])
+
+    return json.dumps({"success": success, "failed": failed, "errors": errors}, indent=2)
+
+
+async def handle_batch_channels_set_permissions(params: dict) -> str:
+    channel_ids = params["channel_ids"]
+    target_id = params["target_id"]
+    target_type = 0 if params["target_type"] == "role" else 1
+
+    payload = {"type": target_type}
+    if params.get("allow"):
+        payload["allow"] = params["allow"]
+    if params.get("deny"):
+        payload["deny"] = params["deny"]
+
+    success = 0
+    failed = 0
+    errors = []
+    semaphore = asyncio.Semaphore(BATCH_CONCURRENCY)
+
+    async def set_permissions_on_channel(channel_id: str) -> None:
+        nonlocal success, failed
+        async with semaphore:
+            try:
+                async with httpx.AsyncClient() as client:
+                    resp = await client.put(
+                        f"{BASE_URL}/channels/{channel_id}/permissions/{target_id}",
+                        headers=get_headers(),
+                        json=payload,
+                    )
+                    resp.raise_for_status()
+                    success += 1
+            except httpx.HTTPStatusError as e:
+                failed += 1
+                try:
+                    detail = e.response.json().get("message", e.response.text)
+                except Exception:
+                    detail = e.response.text
+                errors.append({"channel_id": channel_id, "error": f"HTTP {e.response.status_code}: {detail}"})
+            except Exception as e:
+                failed += 1
+                errors.append({"channel_id": channel_id, "error": str(e)})
+            await asyncio.sleep(BATCH_DELAY_MS / 1000)
+
+    await asyncio.gather(*[set_permissions_on_channel(c) for c in channel_ids])
+
+    return json.dumps({"success": success, "failed": failed, "errors": errors}, indent=2)
+
+
+# ============================================================================
 # HANDLER REGISTRY
 # ============================================================================
 
@@ -2617,6 +2758,10 @@ HANDLERS = {
     "dm.send": handle_dm_send,
     # Bulk Ban
     "bulk_ban.execute": handle_bulk_ban_execute,
+    # Batch
+    "batch.members.add_role": handle_batch_members_add_role,
+    "batch.members.remove_role": handle_batch_members_remove_role,
+    "batch.channels.set_permissions": handle_batch_channels_set_permissions,
 }
 
 
