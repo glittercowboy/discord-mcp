@@ -84,23 +84,18 @@ async def on_ready():
     all_commands = client.tree.get_commands()
     logger.info(f"Commands in tree before sync: {[c.name for c in all_commands]}")
 
-    # Clear global commands (remove duplicates), then sync to guilds only
-    try:
-        # Clear any global commands first
-        client.tree.clear_commands(guild=None)
-        await client.tree.sync()
-        logger.info("Cleared global commands")
-
-        # Sync to each guild (guild commands appear instantly, no duplicates)
-        for guild in client.guilds:
-            try:
-                client.tree.copy_global_to(guild=guild)
-                guild_synced = await client.tree.sync(guild=guild)
-                logger.info(f"Synced {len(guild_synced)} commands to {guild.name}: {[c.name for c in guild_synced]}")
-            except Exception as e:
-                logger.error(f"Failed to sync commands to {guild.name}: {e}")
-    except Exception as e:
-        logger.error(f"Failed to sync commands: {e}")
+    # Sync to guilds only (not global) for instant propagation without duplicates
+    for guild in client.guilds:
+        try:
+            # Clear existing guild commands first to avoid duplicates
+            client.tree.clear_commands(guild=guild)
+            # Copy our commands to this guild
+            client.tree.copy_global_to(guild=guild)
+            # Sync to Discord
+            guild_synced = await client.tree.sync(guild=guild)
+            logger.info(f"Synced {len(guild_synced)} commands to {guild.name}: {[c.name for c in guild_synced]}")
+        except Exception as e:
+            logger.error(f"Failed to sync commands to {guild.name}: {e}")
 
     logger.info(f"Guardian ready in {len(client.guilds)} guild(s)")
 
