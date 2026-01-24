@@ -3,6 +3,7 @@ import logging
 import discord
 from discord.ext import tasks
 from datetime import datetime, timedelta
+from . import logging_utils
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,15 @@ def setup_timeout_task(bot: discord.Client):
                     try:
                         await guild.kick(member, reason="Verification timeout (10 minutes)")
                         logger.info(f"Kicked {member.name} from {guild.name} (verification timeout)")
+
+                        # Get security-logs channel
+                        security_logs_channel = discord.utils.get(guild.channels, name="security-logs")
+                        if security_logs_channel:
+                            await logging_utils.log_timeout_kick(
+                                security_logs_channel,
+                                member,
+                                time_since_join
+                            )
                     except discord.Forbidden:
                         logger.error(f"Cannot kick {member.name}: missing permissions")
                     except discord.NotFound:

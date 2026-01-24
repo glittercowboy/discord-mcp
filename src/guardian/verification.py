@@ -1,6 +1,7 @@
 """Discord UI verification view for emoji-based human verification."""
 import logging
 import discord
+from . import logging_utils
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +17,7 @@ class VerificationView(discord.ui.View):
         member: Member attempting verification
         verified_role: Role to assign on success
         unverified_role: Role to remove on success
+        security_logs_channel: Channel for logging verification attempts
         verified: Boolean flag indicating successful verification
     """
 
@@ -24,7 +26,8 @@ class VerificationView(discord.ui.View):
         guild: discord.Guild,
         member: discord.Member,
         verified_role: discord.Role,
-        unverified_role: discord.Role
+        unverified_role: discord.Role,
+        security_logs_channel: discord.TextChannel
     ):
         """Initialize verification view with 3-minute timeout.
 
@@ -33,12 +36,14 @@ class VerificationView(discord.ui.View):
             member: Member to verify
             verified_role: Role to grant on success
             unverified_role: Role to remove on success
+            security_logs_channel: Channel for logging verification attempts
         """
         super().__init__(timeout=180)  # 3-minute interaction window
         self.guild = guild
         self.member = member
         self.verified_role = verified_role
         self.unverified_role = unverified_role
+        self.security_logs_channel = security_logs_channel
         self.verified = False
 
     @discord.ui.button(label="🍕", style=discord.ButtonStyle.primary, custom_id="pizza_button")
@@ -59,6 +64,14 @@ class VerificationView(discord.ui.View):
 
             self.verified = True
             logger.info(f"Member {self.member.name} verified successfully in {self.guild.name}")
+
+            # Log successful verification
+            await logging_utils.log_verification_attempt(
+                self.security_logs_channel,
+                self.member,
+                success=True,
+                reason="Correct emoji selected"
+            )
 
             # Silent acknowledgment (no visible response)
             await interaction.response.defer()
@@ -98,6 +111,14 @@ class VerificationView(discord.ui.View):
         logger.debug(f"Member {self.member.name} clicked wrong emoji (taco) in {self.guild.name}")
         await interaction.response.send_message("Wrong emoji! Try again.", ephemeral=True)
 
+        # Log failed verification attempt
+        await logging_utils.log_verification_attempt(
+            self.security_logs_channel,
+            self.member,
+            success=False,
+            reason=f"Wrong emoji selected ({button.label})"
+        )
+
     @discord.ui.button(label="🍔", style=discord.ButtonStyle.secondary, custom_id="burger_button")
     async def burger_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Handle wrong emoji selection (burger).
@@ -110,3 +131,11 @@ class VerificationView(discord.ui.View):
         """
         logger.debug(f"Member {self.member.name} clicked wrong emoji (burger) in {self.guild.name}")
         await interaction.response.send_message("Wrong emoji! Try again.", ephemeral=True)
+
+        # Log failed verification attempt
+        await logging_utils.log_verification_attempt(
+            self.security_logs_channel,
+            self.member,
+            success=False,
+            reason=f"Wrong emoji selected ({button.label})"
+        )
