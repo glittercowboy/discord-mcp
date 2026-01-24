@@ -29,10 +29,6 @@ client = discord.Client(intents=intents)
 # Create command tree and attach to client
 client.tree = app_commands.CommandTree(client)
 
-# Register Guardian command group
-guardian_commands = slash_commands.GuardianCommands()
-client.tree.add_command(guardian_commands)
-
 
 def is_moderator_or_higher(member: discord.Member) -> bool:
     """Check if member has moderator+ permissions.
@@ -80,11 +76,16 @@ async def on_ready():
     verification_timeout.setup_timeout_task(client)
     logger.info("Verification timeout task started")
 
+    # Register Guardian command group
+    guardian_commands = slash_commands.GuardianCommands()
+    client.tree.add_command(guardian_commands)
+    logger.info("Registered GuardianCommands group")
+
     # Sync slash commands to all guilds
     for guild in client.guilds:
         try:
-            await client.tree.sync(guild=guild)
-            logger.info(f"Synced slash commands to {guild.name}")
+            synced = await client.tree.sync(guild=guild)
+            logger.info(f"Synced {len(synced)} commands to {guild.name}: {[c.name for c in synced]}")
         except Exception as e:
             logger.error(f"Failed to sync commands to {guild.name}: {e}")
 
