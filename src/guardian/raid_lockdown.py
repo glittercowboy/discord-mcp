@@ -59,12 +59,14 @@ class RaidLockdownManager:
     (verify, security-logs). Auto-recovery timer cancels properly on manual deactivation.
     """
 
-    def __init__(self, recovery_seconds: int = 900):
+    def __init__(self, client: discord.Client, recovery_seconds: int = 900):
         """Initialize lockdown manager.
 
         Args:
+            client: Discord client instance for guild lookups
             recovery_seconds: Auto-recovery duration in seconds (default: 900 = 15 minutes)
         """
+        self.client = client
         self.recovery_seconds = recovery_seconds
         # dict[guild_id] -> {"active": bool, "activated_at": datetime, "task": asyncio.Task}
         self.lockdown_state: Dict[int, Dict] = {}
@@ -225,12 +227,13 @@ class RaidLockdownManager:
             await asyncio.sleep(self.recovery_seconds)
 
             # Get guild object from client
-            # Note: This requires access to the client, which will be passed during integration
-            # For now, log that auto-recovery triggered
-            logger.info(f"Auto-recovery triggered for guild {guild_id}")
+            guild = self.client.get_guild(guild_id)
+            if guild is None:
+                logger.error(f"Cannot auto-recover: guild {guild_id} not found")
+                return
 
-            # The actual deactivation will be handled by the event handler in guardian.py
-            # which has access to the client and can get the guild object
+            logger.info(f"Auto-recovery triggered for guild {guild.name}, deactivating lockdown")
+            await self.deactivate_lockdown(guild)
 
         except asyncio.CancelledError:
             logger.debug(f"Auto-recovery cancelled for guild {guild_id}")
