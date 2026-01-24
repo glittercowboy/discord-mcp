@@ -19,6 +19,7 @@ dependencies = [
     "httpx>=0.28.1",
     "mcp[cli]>=1.25.0",
     "discord.py>=2.6.4",
+    "tldextract>=5.1.2",
 ]
 
 [project.urls]
