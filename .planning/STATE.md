@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 3 of 5 (Account Restrictions)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-01-24 — Completed 03-01-PLAN.md
+Last activity: 2026-01-24 — Completed 03-02-PLAN.md
 
-Progress: [███████░░░] 78% (7/9 plans)
+Progress: [████████░░] 89% (8/9 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 9 min
-- Total execution time: 62 min
+- Total plans completed: 8
+- Average duration: 8 min
+- Total execution time: 64 min
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [███████░░░] 78% (7/9 plans)
 |-------|-------|-------|----------|
 | 01-foundation | 2 | 20min | 10min |
 | 02-verification-gate | 4 | 60min | 15min |
-| 03-account-restrictions | 1 | 2min | 2min |
+| 03-account-restrictions | 2 | 4min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (2min), 02-02 (5min), 02-03 (5min), 02-04 (45min manual testing)
-- Trend: Manual testing/verification takes longer than automated execution
+- Last 5 plans: 02-02 (5min), 02-03 (5min), 02-04 (45min manual), 03-01 (2min), 03-02 (2min)
+- Trend: Phase 3 execution very fast (2min avg) due to clear plan structure
 
 *Updated after each plan completion*
 
@@ -62,11 +62,13 @@ Recent decisions affecting current work:
 - Atomic writes via temp file + rename (03-01) — Prevent config corruption during concurrent writes
 - Hot-reload by reading file each access (03-01) — Runtime config updates without bot restart
 - Guild ID as string in JSON (03-01) — JSON spec requires string keys
+- app_commands.Group for slash commands (03-02) — Organized subcommand structure
+- Ephemeral slash responses (03-02) — Privacy for admin commands
+- Silent deletion + DM (03-02) — Reduce public friction, educate users
 
 ### Pending Todos
 
 - Consider moving Guardian code to separate repo (gsd/discord-guardian)
-- Add slash commands for admin control (/kick, /verify, etc.)
 
 ### Blockers/Concerns
 
@@ -74,6 +76,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-24T05:05:46Z
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-01-24T05:11:33Z
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
