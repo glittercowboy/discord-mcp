@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 Phase: 2 of 5 (Verification Gate)
 Plan: 1 of 4 in current phase
 Status: In progress
-Last activity: 2026-01-23 — Completed 02-02-PLAN.md
+Last activity: 2026-01-23 — Completed 02-01-PLAN.md
 
 Progress: [██░░░░░░░░] 25%
 
@@ -21,18 +21,18 @@ Progress: [██░░░░░░░░] 25%
 **Velocity:**
 - Total plans completed: 3
 - Average duration: 7 min
-- Total execution time: 0.35 hours
+- Total execution time: 0.37 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 2 | 20min | 10min |
-| 02-verification-gate | 1 | 1min | 1min |
+| 02-verification-gate | 1 | 2min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5min), 01-02 (15min), 02-02 (1min)
-- Trend: Utility modules complete quickly vs deployment
+- Last 5 plans: 01-01 (5min), 01-02 (15min), 02-01 (2min)
+- Trend: Core feature modules complete quickly, deployment takes 3x
 
 *Updated after each plan completion*
 
@@ -50,8 +50,9 @@ Recent decisions affecting current work:
 - Enable message_content intent now (01-01) — Avoid re-enabling for Phase 5 link scanning
 - Idempotent infrastructure functions (01-01) — Safe to call multiple times on restart
 - Worker deployment for Railway (01-02) — No health check endpoint because Guardian is Gateway WebSocket, not HTTP server
-- 30-second timeout check interval (02-02) — Balances responsiveness vs CPU usage
-- Embed-based security logging (02-02) — Color coding enables visual triage in audit trail
+- 180s view timeout for ephemeral verification (02-01) — Acceptable state loss on restart, user can retry
+- Permission-based moderator bypass (02-01) — administrator/moderate_members/manage_guild permissions
+- Atomic role operations (02-01) — Sequential add_roles/remove_roles prevents race conditions
 
 ### Pending Todos
 
@@ -64,5 +65,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 02-02-PLAN.md (timeout enforcement and security logging)
+Stopped at: Completed 02-01-PLAN.md (verification challenge UI and moderator bypass)
 Resume file: None
