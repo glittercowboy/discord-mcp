@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** New members must prove they're human before accessing the server, and scam links are blocked instantly.
-**Current focus:** Phase 2 - Verification Gate
+**Current focus:** Phase 3 - Account Restrictions
 
 ## Current Position
 
-Phase: 2 of 5 (Verification Gate)
-Plan: 3 of 4 in current phase
-Status: In progress
-Last activity: 2026-01-23 — Completed 02-03-PLAN.md
+Phase: 3 of 5 (Account Restrictions)
+Plan: 0 of 0 in current phase (not yet planned)
+Status: Ready to plan
+Last activity: 2026-01-24 — Phase 2 complete
 
-Progress: [███░░░░░░░] 30%
+Progress: [████░░░░░░] 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 6 min
-- Total execution time: 0.52 hours
+- Total plans completed: 6
+- Average duration: 10 min
+- Total execution time: 1 hour
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 2 | 20min | 10min |
-| 02-verification-gate | 3 | 12min | 4min |
+| 02-verification-gate | 4 | 60min | 15min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (15min), 02-01 (2min), 02-02 (5min), 02-03 (5min)
-- Trend: Phase 2 tasks executing quickly (2-5min range)
+- Last 5 plans: 02-01 (2min), 02-02 (5min), 02-03 (5min), 02-04 (45min manual testing)
+- Trend: Manual testing/verification takes longer than automated execution
 
 *Updated after each plan completion*
 
@@ -53,20 +53,22 @@ Recent decisions affecting current work:
 - 180s view timeout for ephemeral verification (02-01) — Acceptable state loss on restart, user can retry
 - Permission-based moderator bypass (02-01) — administrator/moderate_members/manage_guild permissions
 - Atomic role operations (02-01) — Sequential add_roles/remove_roles prevents race conditions
-- Pass security_logs_channel to VerificationView (02-03) — Dependency injection pattern for consistent logging
-- Log both success and failure verification attempts (02-03) — Security monitoring requires visibility into both outcomes
-- Start timeout task after infrastructure init (02-03) — Ensures channels/roles exist before background task starts
+- Discord verification level 2 (02-04) — Email + 5min account age, Guardian handles the rest
+- Grandfather existing members (02-04) — Bulk-assigned @Verified to 264 members to avoid disruption
+- Channel permissions via role overwrites (02-04) — Deny @everyone, allow @Verified on categories
+- #security-logs mod-only (02-04) — Contains sensitive info, restricted to Moderator role
 
 ### Pending Todos
 
-None yet.
+- Consider moving Guardian code to separate repo (gsd/discord-guardian)
+- Add slash commands for admin control (/kick, /verify, etc.)
 
 ### Blockers/Concerns
 
-None yet.
+None.
 
 ## Session Continuity
 
-Last session: 2026-01-23
-Stopped at: Completed 02-03-PLAN.md (end-to-end verification pipeline with logging)
+Last session: 2026-01-24
+Stopped at: Phase 2 complete, verification gate working in production
 Resume file: None

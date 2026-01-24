@@ -13,7 +13,7 @@ GSD Guardian protects the GSD Discord community through layered security: verifi
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Bot infrastructure and auto-provisioning
-- [ ] **Phase 2: Verification Gate** - Human verification with emoji challenge
+- [x] **Phase 2: Verification Gate** - Human verification with emoji challenge
 - [ ] **Phase 3: Account Restrictions** - New account filtering and control plane
 - [ ] **Phase 4: Raid Detection** - Join rate monitoring with lockdown
 - [ ] **Phase 5: Link Scanning** - Phishing link detection and blocking
@@ -48,10 +48,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Verification UI and moderator bypass logic
-- [ ] 02-02-PLAN.md — Timeout tracking and security logging utilities
-- [ ] 02-03-PLAN.md — Wire verification flow with logging
-- [ ] 02-04-PLAN.md — End-to-end verification testing
+- [x] 02-01-PLAN.md — Verification UI and moderator bypass logic
+- [x] 02-02-PLAN.md — Timeout tracking and security logging utilities
+- [x] 02-03-PLAN.md — Wire verification flow with logging
+- [x] 02-04-PLAN.md — End-to-end verification testing
 
 ### Phase 3: Account Restrictions
 **Goal**: New accounts restricted from posting malicious content, admins control bot via slash commands
@@ -106,7 +106,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | ✓ Complete | 2026-01-23 |
-| 2. Verification Gate | 0/4 | Ready to execute | - |
+| 2. Verification Gate | 4/4 | ✓ Complete | 2026-01-24 |
 | 3. Account Restrictions | 0/0 | Not started | - |
 | 4. Raid Detection | 0/0 | Not started | - |
 | 5. Link Scanning | 0/0 | Not started | - |

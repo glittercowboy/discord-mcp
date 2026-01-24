@@ -2,7 +2,7 @@
 import logging
 import discord
 from discord.ext import tasks
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from . import logging_utils
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ def setup_timeout_task(bot: discord.Client):
             if not unverified_role:
                 continue
 
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
             for member in guild.members:
                 if unverified_role not in member.roles:
                     continue

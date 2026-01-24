@@ -112,10 +112,16 @@ async def on_member_join(member: discord.Member):
 
         # Send verification challenge
         embed = discord.Embed(
-            title="Welcome! Please verify you're human",
-            description="Click the 🍕 emoji below to gain access to the server.",
+            title=f"👋 Welcome, {member.display_name}!",
+            description=(
+                "To access the server, click the **pizza emoji** button below.\n\n"
+                "🍕 = Verify me!\n"
+                "🌮 🍔 = Wrong answer\n\n"
+                "*This helps us keep bots out.*"
+            ),
             color=discord.Color.blue()
         )
+        embed.set_footer(text="Having trouble? Contact a moderator.")
         view = verification.VerificationView(
             guild=member.guild,
             member=member,

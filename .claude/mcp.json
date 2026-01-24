@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "discord-mcp": {
+      "command": "uv",
+      "args": ["--directory", "/Users/lexchristopherson/Developer/mcp/discord-mcp", "run", "python", "-m", "src.server"],
+      "env": {
+        "DISCORD_BOT_TOKEN": "${DISCORD_BOT_TOKEN}",
+        "DISCORD_GUILD_ID": "${DISCORD_GUILD_ID}"
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 """Security logging utilities for Discord events."""
 import logging
 import discord
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ async def log_member_join(channel: discord.TextChannel, member: discord.Member):
     embed = discord.Embed(
         title="Member Joined",
         color=discord.Color.green(),
-        timestamp=datetime.utcnow()
+        timestamp=datetime.now(timezone.utc)
     )
     embed.add_field(
         name="Member",
@@ -43,7 +43,7 @@ async def log_member_leave(channel: discord.TextChannel, member: discord.Member)
         channel: Security logs channel to send embed to
         member: Member who left
     """
-    time_in_server = datetime.utcnow() - member.joined_at
+    time_in_server = datetime.now(timezone.utc) - member.joined_at
     days = time_in_server.days
     hours, remainder = divmod(time_in_server.seconds, 3600)
     minutes, _ = divmod(remainder, 60)
@@ -58,7 +58,7 @@ async def log_member_leave(channel: discord.TextChannel, member: discord.Member)
     embed = discord.Embed(
         title="Member Left",
         color=discord.Color.orange(),
-        timestamp=datetime.utcnow()
+        timestamp=datetime.now(timezone.utc)
     )
     embed.add_field(
         name="Member",
@@ -95,7 +95,7 @@ async def log_verification_attempt(
     embed = discord.Embed(
         title="Verification Attempt",
         color=discord.Color.green() if success else discord.Color.red(),
-        timestamp=datetime.utcnow()
+        timestamp=datetime.now(timezone.utc)
     )
     embed.add_field(
         name="Member",
@@ -139,7 +139,7 @@ async def log_timeout_kick(
     embed = discord.Embed(
         title="Timeout Kick",
         color=discord.Color.red(),
-        timestamp=datetime.utcnow()
+        timestamp=datetime.now(timezone.utc)
     )
     embed.add_field(
         name="Member",
