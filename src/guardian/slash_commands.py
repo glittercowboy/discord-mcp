@@ -422,3 +422,61 @@ class GuardianCommands(app_commands.Group):
             await interaction.response.send_message("Cannot timeout this member (permission denied or hierarchy issue).", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"Failed to timeout member: {e}", ephemeral=True)
+
+    @app_commands.command(name="lockdown-on", description="Manually activate raid lockdown")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def lockdown_on_command(self, interaction: discord.Interaction):
+        """Manually activate lockdown mode.
+
+        Enables slowmode on all channels (except verify/security-logs) and pauses new verifications.
+        Auto-deactivates after 15 minutes unless manually deactivated.
+        """
+        # Import guardian module to access lockdown_manager
+        from . import guardian
+
+        security_logs = discord.utils.get(interaction.guild.channels, name="security-logs")
+
+        # Activate lockdown
+        activated = await guardian.lockdown_manager.activate_lockdown(
+            guild=interaction.guild,
+            alert_channel=security_logs
+        )
+
+        if activated:
+            embed = discord.Embed(
+                title="Lockdown Activated",
+                description="Manual lockdown enabled. Slowmode active, verifications paused.",
+                color=discord.Color.red()
+            )
+            embed.add_field(name="Auto-Recovery", value="15 minutes", inline=False)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        else:
+            await interaction.response.send_message("Lockdown already active.", ephemeral=True)
+
+    @app_commands.command(name="lockdown-off", description="Manually deactivate raid lockdown")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def lockdown_off_command(self, interaction: discord.Interaction):
+        """Manually deactivate lockdown mode.
+
+        Disables slowmode on all channels and cancels auto-recovery timer.
+        """
+        # Import guardian module to access lockdown_manager
+        from . import guardian
+
+        guild_id = interaction.guild.id
+
+        # Check if lockdown is active
+        if guild_id not in guardian.lockdown_manager.lockdown_state or \
+           not guardian.lockdown_manager.lockdown_state[guild_id].get("active", False):
+            await interaction.response.send_message("Lockdown is not active.", ephemeral=True)
+            return
+
+        # Deactivate lockdown
+        await guardian.lockdown_manager.deactivate_lockdown(interaction.guild)
+
+        embed = discord.Embed(
+            title="Lockdown Deactivated",
+            description="Manual lockdown disabled. Slowmode removed, verifications resumed.",
+            color=discord.Color.green()
+        )
+        await interaction.response.send_message(embed=embed, ephemeral=True)
