@@ -60,15 +60,15 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Discord account <7 days old cannot post URLs, attachments, or @mention roles
   2. Moderator runs /guardian status and sees current config (thresholds, enabled features)
-  3. Moderator runs /guardian set-threshold and changes raid detection value without restart
+  3. Moderator runs /guardian config and changes threshold value without restart
   4. Moderator runs /guardian verify @user and manually passes a stuck member
   5. Role added to exemption list bypasses new account restrictions
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Account restriction and config modules
-- [ ] 03-02-PLAN.md — Slash commands and message filtering integration
-- [ ] 03-03-PLAN.md — Command registration and verification
+- [x] 03-01-PLAN.md — Account restriction and config modules
+- [x] 03-02-PLAN.md — Slash commands and message filtering integration
+- [x] 03-03-PLAN.md — Command registration and verification
 
 ### Phase 4: Raid Detection
 **Goal**: Bot detects coordinated join attacks and triggers lockdown to prevent spam
@@ -109,6 +109,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | ✓ Complete | 2026-01-23 |
 | 2. Verification Gate | 4/4 | ✓ Complete | 2026-01-24 |
-| 3. Account Restrictions | 0/0 | Not started | - |
+| 3. Account Restrictions | 3/3 | ✓ Complete | 2026-01-24 |
 | 4. Raid Detection | 0/0 | Not started | - |
 | 5. Link Scanning | 0/0 | Not started | - |

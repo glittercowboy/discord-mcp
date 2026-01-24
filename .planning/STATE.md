@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** New members must prove they're human before accessing the server, and scam links are blocked instantly.
-**Current focus:** Phase 3 - Account Restrictions
+**Current focus:** Phase 4 - Raid Detection
 
 ## Current Position
 
-Phase: 3 of 5 (Account Restrictions)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-01-24 — Completed 03-02-PLAN.md
+Phase: 4 of 5 (Raid Detection)
+Plan: 0 of 0 in current phase (not yet planned)
+Status: Ready to plan
+Last activity: 2026-01-24 — Phase 3 complete
 
-Progress: [████████░░] 89% (8/9 plans)
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 8 min
-- Total execution time: 64 min
+- Total plans completed: 9
+- Average duration: 9 min
+- Total execution time: 88 min
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [████████░░] 89% (8/9 plans)
 |-------|-------|-------|----------|
 | 01-foundation | 2 | 20min | 10min |
 | 02-verification-gate | 4 | 60min | 15min |
-| 03-account-restrictions | 2 | 4min | 2min |
+| 03-account-restrictions | 3 | 28min | 9min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (5min), 02-03 (5min), 02-04 (45min manual), 03-01 (2min), 03-02 (2min)
-- Trend: Phase 3 execution very fast (2min avg) due to clear plan structure
+- Last 5 plans: 02-04 (45min manual), 03-01 (2min), 03-02 (2min), 03-03 (24min debugging)
+- Trend: Slash command sync required debugging (CommandTree attachment, guild-only sync)
 
 *Updated after each plan completion*
 
@@ -65,6 +65,8 @@ Recent decisions affecting current work:
 - app_commands.Group for slash commands (03-02) — Organized subcommand structure
 - Ephemeral slash responses (03-02) — Privacy for admin commands
 - Silent deletion + DM (03-02) — Reduce public friction, educate users
+- CommandTree at client.tree (03-03) — Required for discord.py slash command registration
+- Guild-only sync with clear_commands (03-03) — Prevents duplicate commands, instant propagation
 
 ### Pending Todos
 
@@ -76,6 +78,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-24T05:11:33Z
-Stopped at: Completed 03-02-PLAN.md
+Last session: 2026-01-24
+Stopped at: Phase 3 complete
 Resume file: None
