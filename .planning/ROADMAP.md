@@ -63,10 +63,12 @@ Plans:
   3. Moderator runs /guardian set-threshold and changes raid detection value without restart
   4. Moderator runs /guardian verify @user and manually passes a stuck member
   5. Role added to exemption list bypasses new account restrictions
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during planning
+- [ ] 03-01-PLAN.md — Account restriction and config modules
+- [ ] 03-02-PLAN.md — Slash commands and message filtering integration
+- [ ] 03-03-PLAN.md — Command registration and verification
 
 ### Phase 4: Raid Detection
 **Goal**: Bot detects coordinated join attacks and triggers lockdown to prevent spam
