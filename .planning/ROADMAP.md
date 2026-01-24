@@ -14,8 +14,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Bot infrastructure and auto-provisioning
 - [x] **Phase 2: Verification Gate** - Human verification with emoji challenge
-- [ ] **Phase 3: Account Restrictions** - New account filtering and control plane
-- [ ] **Phase 4: Raid Detection** - Join rate monitoring with lockdown
+- [x] **Phase 3: Account Restrictions** - New account filtering and control plane
+- [x] **Phase 4: Raid Detection** - Join rate monitoring with lockdown
 - [ ] **Phase 5: Link Scanning** - Phishing link detection and blocking
 
 ## Phase Details
@@ -86,8 +86,8 @@ Plans:
 - [x] 04-01-PLAN.md — Core detection and lockdown modules (raid_detection, raid_lockdown, logging)
 - [x] 04-02-PLAN.md — Wire join detection into on_member_join event
 - [x] 04-03-PLAN.md — Moderation and manual lockdown commands
-- [ ] 04-04-PLAN.md — Gap closure: Complete auto-recovery deactivation
-- [ ] 04-05-PLAN.md — Gap closure: Fix verification pause timing
+- [x] 04-04-PLAN.md — Gap closure: Complete auto-recovery deactivation
+- [x] 04-05-PLAN.md — Gap closure: Fix verification pause timing
 
 ### Phase 5: Link Scanning
 **Goal**: Messages with known phishing links are deleted and poster punished
@@ -114,5 +114,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 2/2 | ✓ Complete | 2026-01-23 |
 | 2. Verification Gate | 4/4 | ✓ Complete | 2026-01-24 |
 | 3. Account Restrictions | 3/3 | ✓ Complete | 2026-01-24 |
-| 4. Raid Detection | 0/0 | Not started | - |
+| 4. Raid Detection | 5/5 | ✓ Complete | 2026-01-24 |
 | 5. Link Scanning | 0/0 | Not started | - |

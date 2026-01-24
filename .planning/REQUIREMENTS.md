@@ -99,10 +99,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VERIF-03 | Phase 2 | Pending |
 | VERIF-04 | Phase 2 | Pending |
 | VERIF-05 | Phase 3 | Pending |
-| RAID-01 | Phase 4 | Pending |
-| RAID-02 | Phase 4 | Pending |
-| RAID-03 | Phase 4 | Pending |
-| RAID-04 | Phase 4 | Pending |
+| RAID-01 | Phase 4 | Complete |
+| RAID-02 | Phase 4 | Complete |
+| RAID-03 | Phase 4 | Complete |
+| RAID-04 | Phase 4 | Complete |
 | LINK-01 | Phase 5 | Pending |
 | LINK-02 | Phase 5 | Pending |
 | LINK-03 | Phase 5 | Pending |
@@ -114,7 +114,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LOG-01 | Phase 2 | Pending |
 | LOG-02 | Phase 2 | Pending |
 | LOG-03 | Phase 5 | Pending |
-| LOG-04 | Phase 4 | Pending |
+| LOG-04 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 24 total
