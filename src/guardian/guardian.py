@@ -2,6 +2,7 @@
 import logging
 import discord
 from discord import app_commands
+from datetime import datetime, timezone
 from . import config
 from . import infrastructure
 from . import verification
@@ -10,6 +11,8 @@ from . import verification_timeout
 from . import account_restrictions
 from . import config_manager
 from . import slash_commands
+from . import raid_detection
+from . import raid_lockdown
 
 # Configure logging
 logging.basicConfig(
@@ -32,6 +35,10 @@ client.tree = app_commands.CommandTree(client)
 # Register Guardian command group at module level (before sync)
 guardian_commands = slash_commands.GuardianCommands()
 client.tree.add_command(guardian_commands)
+
+# Raid detection and lockdown management
+join_tracker = raid_detection.JoinTracker(window_seconds=30)
+lockdown_manager = raid_lockdown.RaidLockdownManager(recovery_seconds=900)  # 15 minutes
 
 
 def is_moderator_or_higher(member: discord.Member) -> bool:
@@ -110,6 +117,51 @@ async def on_member_join(member: discord.Member):
         logger.info(f"Moderator {member.name} bypassed verification in {member.guild.name}")
         return
 
+    # Add join to tracker
+    join_tracker.add_join(member.guild.id, member)
+
+    # Check for raid thresholds
+    recent_joins = join_tracker.get_recent_joins(member.guild.id)
+    join_count = len(recent_joins)
+
+    # Get security-logs channel early (needed for alerts)
+    security_logs_channel = discord.utils.get(member.guild.channels, name="security-logs")
+
+    # Track if any raid condition triggered (for lockdown activation)
+    raid_detected = False
+
+    # RAID-01: 10+ joins in 30 seconds
+    if join_count >= 10:
+        raid_detected = True
+        if security_logs_channel:
+            embed = discord.Embed(
+                title="⚠️ RAID-01: Rapid Join Spike",
+                description=f"{join_count} members joined in 30 seconds",
+                color=discord.Color.orange()
+            )
+            embed.add_field(name="Threshold", value="10+ joins", inline=False)
+            embed.timestamp = datetime.now(timezone.utc)
+            await security_logs_channel.send(embed=embed)
+
+    # RAID-03: >50% new accounts (independent check)
+    distribution = raid_detection.analyze_account_age_distribution(recent_joins, threshold_days=7)
+    if distribution["percentage"] > 50:
+        raid_detected = True
+        if security_logs_channel:
+            embed = discord.Embed(
+                title="🚨 RAID-03: New Account Spike",
+                description=f"{distribution['percentage']}% of recent joins are accounts <{distribution['threshold_days']} days old",
+                color=discord.Color.red()
+            )
+            embed.add_field(name="Total Joins", value=f"{distribution['total']}", inline=True)
+            embed.add_field(name="New Accounts", value=f"{distribution['new_accounts']}", inline=True)
+            embed.timestamp = datetime.now(timezone.utc)
+            await security_logs_channel.send(embed=embed)
+
+    # Activate lockdown if any raid condition met
+    if raid_detected:
+        await lockdown_manager.activate_lockdown(member.guild, security_logs_channel)
+
     try:
         # Get @Unverified role
         unverified_role = discord.utils.get(member.guild.roles, name="Unverified")
@@ -123,7 +175,6 @@ async def on_member_join(member: discord.Member):
 
         # Get channels
         verify_channel = discord.utils.get(member.guild.channels, name="verify")
-        security_logs_channel = discord.utils.get(member.guild.channels, name="security-logs")
 
         if not verify_channel or not security_logs_channel:
             logger.error(f"Required channels not found in {member.guild.name}")
@@ -131,6 +182,12 @@ async def on_member_join(member: discord.Member):
 
         # Log member join
         await logging_utils.log_member_join(security_logs_channel, member)
+
+        # Pause new verifications during lockdown
+        if lockdown_manager.lockdown_state.get(member.guild.id, {}).get("active", False):
+            logger.info(f"Verification paused for {member.name} during lockdown in {member.guild.name}")
+            # Log join but skip verification UI
+            return
 
         # Get @Verified role for verification view
         verified_role = discord.utils.get(member.guild.roles, name="Verified")
