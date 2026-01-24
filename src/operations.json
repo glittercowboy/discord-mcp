@@ -1062,6 +1062,57 @@
             "allow": {"type": "string", "required": false, "description": "Permission bits to allow"},
             "deny": {"type": "string", "required": false, "description": "Permission bits to deny"}
           }
+        },
+        "members.timeout": {
+          "description": "Timeout multiple members",
+          "parameters": {
+            "member_ids": {"type": "array", "required": true, "description": "Array of member/user IDs"},
+            "duration_seconds": {"type": "integer", "required": true, "description": "Timeout duration in seconds (max 28 days)"},
+            "reason": {"type": "string", "required": false, "description": "Reason for timeout (audit log)"}
+          }
+        },
+        "members.kick": {
+          "description": "Kick multiple members from the server",
+          "parameters": {
+            "member_ids": {"type": "array", "required": true, "description": "Array of member/user IDs"},
+            "reason": {"type": "string", "required": false, "description": "Reason for kick (audit log)"}
+          }
+        },
+        "channels.delete": {
+          "description": "Delete multiple channels",
+          "parameters": {
+            "channel_ids": {"type": "array", "required": true, "description": "Array of channel IDs to delete"}
+          }
+        },
+        "channels.edit": {
+          "description": "Edit multiple channels with the same settings",
+          "parameters": {
+            "channel_ids": {"type": "array", "required": true, "description": "Array of channel IDs"},
+            "name": {"type": "string", "required": false, "description": "New channel name"},
+            "topic": {"type": "string", "required": false, "description": "New topic"},
+            "nsfw": {"type": "boolean", "required": false, "description": "NSFW status"},
+            "slowmode": {"type": "integer", "required": false, "description": "Slowmode in seconds"}
+          }
+        },
+        "roles.add_to_member": {
+          "description": "Add multiple roles to a single member",
+          "parameters": {
+            "member_id": {"type": "string", "required": true, "description": "Member/user ID"},
+            "role_ids": {"type": "array", "required": true, "description": "Array of role IDs to add"}
+          }
+        },
+        "roles.remove_from_member": {
+          "description": "Remove multiple roles from a single member",
+          "parameters": {
+            "member_id": {"type": "string", "required": true, "description": "Member/user ID"},
+            "role_ids": {"type": "array", "required": true, "description": "Array of role IDs to remove"}
+          }
+        },
+        "threads.archive": {
+          "description": "Archive multiple threads",
+          "parameters": {
+            "thread_ids": {"type": "array", "required": true, "description": "Array of thread IDs to archive"}
+          }
         }
       }
     }

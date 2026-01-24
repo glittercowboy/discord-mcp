@@ -2595,6 +2595,277 @@ async def handle_batch_channels_set_permissions(params: dict) -> str:
     return json.dumps({"success": success, "failed": failed, "errors": errors}, indent=2)
 
 
+async def handle_batch_members_timeout(params: dict) -> str:
+    member_ids = params["member_ids"]
+    duration_seconds = params["duration_seconds"]
+    reason = params.get("reason")
+    timeout_until = datetime.now(timezone.utc) + timedelta(seconds=duration_seconds)
+
+    success = 0
+    failed = 0
+    errors = []
+    semaphore = asyncio.Semaphore(BATCH_CONCURRENCY)
+
+    async def timeout_member(member_id: str) -> None:
+        nonlocal success, failed
+        async with semaphore:
+            try:
+                async with httpx.AsyncClient() as client:
+                    resp = await client.patch(
+                        f"{BASE_URL}/guilds/{GUILD_ID}/members/{member_id}",
+                        headers=get_headers(reason),
+                        json={"communication_disabled_until": timeout_until.isoformat()},
+                    )
+                    resp.raise_for_status()
+                    success += 1
+            except httpx.HTTPStatusError as e:
+                failed += 1
+                try:
+                    detail = e.response.json().get("message", e.response.text)
+                except Exception:
+                    detail = e.response.text
+                errors.append({"member_id": member_id, "error": f"HTTP {e.response.status_code}: {detail}"})
+            except Exception as e:
+                failed += 1
+                errors.append({"member_id": member_id, "error": str(e)})
+            await asyncio.sleep(BATCH_DELAY_MS / 1000)
+
+    await asyncio.gather(*[timeout_member(m) for m in member_ids])
+
+    return json.dumps({"success": success, "failed": failed, "errors": errors}, indent=2)
+
+
+async def handle_batch_members_kick(params: dict) -> str:
+    member_ids = params["member_ids"]
+    reason = params.get("reason")
+
+    success = 0
+    failed = 0
+    errors = []
+    semaphore = asyncio.Semaphore(BATCH_CONCURRENCY)
+
+    async def kick_member(member_id: str) -> None:
+        nonlocal success, failed
+        async with semaphore:
+            try:
+                async with httpx.AsyncClient() as client:
+                    resp = await client.delete(
+                        f"{BASE_URL}/guilds/{GUILD_ID}/members/{member_id}",
+                        headers=get_headers(reason),
+                    )
+                    resp.raise_for_status()
+                    success += 1
+            except httpx.HTTPStatusError as e:
+                failed += 1
+                try:
+                    detail = e.response.json().get("message", e.response.text)
+                except Exception:
+                    detail = e.response.text
+                errors.append({"member_id": member_id, "error": f"HTTP {e.response.status_code}: {detail}"})
+            except Exception as e:
+                failed += 1
+                errors.append({"member_id": member_id, "error": str(e)})
+            await asyncio.sleep(BATCH_DELAY_MS / 1000)
+
+    await asyncio.gather(*[kick_member(m) for m in member_ids])
+
+    return json.dumps({"success": success, "failed": failed, "errors": errors}, indent=2)
+
+
+async def handle_batch_channels_delete(params: dict) -> str:
+    channel_ids = params["channel_ids"]
+
+    success = 0
+    failed = 0
+    errors = []
+    semaphore = asyncio.Semaphore(BATCH_CONCURRENCY)
+
+    async def delete_channel(channel_id: str) -> None:
+        nonlocal success, failed
+        async with semaphore:
+            try:
+                async with httpx.AsyncClient() as client:
+                    resp = await client.delete(
+                        f"{BASE_URL}/channels/{channel_id}",
+                        headers=get_headers(),
+                    )
+                    resp.raise_for_status()
+                    success += 1
+            except httpx.HTTPStatusError as e:
+                failed += 1
+                try:
+                    detail = e.response.json().get("message", e.response.text)
+                except Exception:
+                    detail = e.response.text
+                errors.append({"channel_id": channel_id, "error": f"HTTP {e.response.status_code}: {detail}"})
+            except Exception as e:
+                failed += 1
+                errors.append({"channel_id": channel_id, "error": str(e)})
+            await asyncio.sleep(BATCH_DELAY_MS / 1000)
+
+    await asyncio.gather(*[delete_channel(c) for c in channel_ids])
+
+    return json.dumps({"success": success, "failed": failed, "errors": errors}, indent=2)
+
+
+async def handle_batch_channels_edit(params: dict) -> str:
+    channel_ids = params["channel_ids"]
+
+    payload = {}
+    if params.get("name"):
+        payload["name"] = params["name"]
+    if params.get("topic") is not None:
+        payload["topic"] = params["topic"]
+    if params.get("nsfw") is not None:
+        payload["nsfw"] = params["nsfw"]
+    if params.get("slowmode") is not None:
+        payload["rate_limit_per_user"] = params["slowmode"]
+
+    success = 0
+    failed = 0
+    errors = []
+    semaphore = asyncio.Semaphore(BATCH_CONCURRENCY)
+
+    async def edit_channel(channel_id: str) -> None:
+        nonlocal success, failed
+        async with semaphore:
+            try:
+                async with httpx.AsyncClient() as client:
+                    resp = await client.patch(
+                        f"{BASE_URL}/channels/{channel_id}",
+                        headers=get_headers(),
+                        json=payload,
+                    )
+                    resp.raise_for_status()
+                    success += 1
+            except httpx.HTTPStatusError as e:
+                failed += 1
+                try:
+                    detail = e.response.json().get("message", e.response.text)
+                except Exception:
+                    detail = e.response.text
+                errors.append({"channel_id": channel_id, "error": f"HTTP {e.response.status_code}: {detail}"})
+            except Exception as e:
+                failed += 1
+                errors.append({"channel_id": channel_id, "error": str(e)})
+            await asyncio.sleep(BATCH_DELAY_MS / 1000)
+
+    await asyncio.gather(*[edit_channel(c) for c in channel_ids])
+
+    return json.dumps({"success": success, "failed": failed, "errors": errors}, indent=2)
+
+
+async def handle_batch_roles_add_to_member(params: dict) -> str:
+    member_id = params["member_id"]
+    role_ids = params["role_ids"]
+
+    success = 0
+    failed = 0
+    errors = []
+    semaphore = asyncio.Semaphore(BATCH_CONCURRENCY)
+
+    async def add_role(role_id: str) -> None:
+        nonlocal success, failed
+        async with semaphore:
+            try:
+                async with httpx.AsyncClient() as client:
+                    resp = await client.put(
+                        f"{BASE_URL}/guilds/{GUILD_ID}/members/{member_id}/roles/{role_id}",
+                        headers=get_headers(),
+                    )
+                    resp.raise_for_status()
+                    success += 1
+            except httpx.HTTPStatusError as e:
+                failed += 1
+                try:
+                    detail = e.response.json().get("message", e.response.text)
+                except Exception:
+                    detail = e.response.text
+                errors.append({"role_id": role_id, "error": f"HTTP {e.response.status_code}: {detail}"})
+            except Exception as e:
+                failed += 1
+                errors.append({"role_id": role_id, "error": str(e)})
+            await asyncio.sleep(BATCH_DELAY_MS / 1000)
+
+    await asyncio.gather(*[add_role(r) for r in role_ids])
+
+    return json.dumps({"success": success, "failed": failed, "errors": errors}, indent=2)
+
+
+async def handle_batch_roles_remove_from_member(params: dict) -> str:
+    member_id = params["member_id"]
+    role_ids = params["role_ids"]
+
+    success = 0
+    failed = 0
+    errors = []
+    semaphore = asyncio.Semaphore(BATCH_CONCURRENCY)
+
+    async def remove_role(role_id: str) -> None:
+        nonlocal success, failed
+        async with semaphore:
+            try:
+                async with httpx.AsyncClient() as client:
+                    resp = await client.delete(
+                        f"{BASE_URL}/guilds/{GUILD_ID}/members/{member_id}/roles/{role_id}",
+                        headers=get_headers(),
+                    )
+                    resp.raise_for_status()
+                    success += 1
+            except httpx.HTTPStatusError as e:
+                failed += 1
+                try:
+                    detail = e.response.json().get("message", e.response.text)
+                except Exception:
+                    detail = e.response.text
+                errors.append({"role_id": role_id, "error": f"HTTP {e.response.status_code}: {detail}"})
+            except Exception as e:
+                failed += 1
+                errors.append({"role_id": role_id, "error": str(e)})
+            await asyncio.sleep(BATCH_DELAY_MS / 1000)
+
+    await asyncio.gather(*[remove_role(r) for r in role_ids])
+
+    return json.dumps({"success": success, "failed": failed, "errors": errors}, indent=2)
+
+
+async def handle_batch_threads_archive(params: dict) -> str:
+    thread_ids = params["thread_ids"]
+
+    success = 0
+    failed = 0
+    errors = []
+    semaphore = asyncio.Semaphore(BATCH_CONCURRENCY)
+
+    async def archive_thread(thread_id: str) -> None:
+        nonlocal success, failed
+        async with semaphore:
+            try:
+                async with httpx.AsyncClient() as client:
+                    resp = await client.patch(
+                        f"{BASE_URL}/channels/{thread_id}",
+                        headers=get_headers(),
+                        json={"archived": True},
+                    )
+                    resp.raise_for_status()
+                    success += 1
+            except httpx.HTTPStatusError as e:
+                failed += 1
+                try:
+                    detail = e.response.json().get("message", e.response.text)
+                except Exception:
+                    detail = e.response.text
+                errors.append({"thread_id": thread_id, "error": f"HTTP {e.response.status_code}: {detail}"})
+            except Exception as e:
+                failed += 1
+                errors.append({"thread_id": thread_id, "error": str(e)})
+            await asyncio.sleep(BATCH_DELAY_MS / 1000)
+
+    await asyncio.gather(*[archive_thread(t) for t in thread_ids])
+
+    return json.dumps({"success": success, "failed": failed, "errors": errors}, indent=2)
+
+
 # ============================================================================
 # HANDLER REGISTRY
 # ============================================================================
@@ -2762,6 +3033,13 @@ HANDLERS = {
     "batch.members.add_role": handle_batch_members_add_role,
     "batch.members.remove_role": handle_batch_members_remove_role,
     "batch.channels.set_permissions": handle_batch_channels_set_permissions,
+    "batch.members.timeout": handle_batch_members_timeout,
+    "batch.members.kick": handle_batch_members_kick,
+    "batch.channels.delete": handle_batch_channels_delete,
+    "batch.channels.edit": handle_batch_channels_edit,
+    "batch.roles.add_to_member": handle_batch_roles_add_to_member,
+    "batch.roles.remove_from_member": handle_batch_roles_remove_from_member,
+    "batch.threads.archive": handle_batch_threads_archive,
 }
 
 
