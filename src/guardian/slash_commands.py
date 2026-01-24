@@ -480,3 +480,25 @@ class GuardianCommands(app_commands.Group):
             color=discord.Color.green()
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @app_commands.command(name="reload-blocklist", description="Reload phishing link blocklist from disk")
+    @app_commands.default_permissions(administrator=True)
+    async def reload_blocklist(self, interaction: discord.Interaction):
+        """Reload blocklist from file (admin only).
+
+        Manually reload the blocklist.json file without restarting the bot.
+        Useful after updating the blocklist with new phishing domains.
+        """
+        # Import guardian module to access global blocklist instance
+        from . import guardian
+
+        # Reload blocklist
+        guardian.blocklist.load_blocklist()
+
+        # Count domains loaded
+        domain_count = len(guardian.blocklist.domains)
+
+        await interaction.response.send_message(
+            f"✅ Blocklist reloaded: {domain_count:,} domains",
+            ephemeral=True
+        )
