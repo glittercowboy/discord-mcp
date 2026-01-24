@@ -26,12 +26,12 @@ intents.message_content = True  # Required for Phase 5 link scanning
 # Create Discord client
 client = discord.Client(intents=intents)
 
-# Create command tree
-tree = app_commands.CommandTree(client)
+# Create command tree and attach to client
+client.tree = app_commands.CommandTree(client)
 
 # Register Guardian command group
 guardian_commands = slash_commands.GuardianCommands()
-tree.add_command(guardian_commands)
+client.tree.add_command(guardian_commands)
 
 
 def is_moderator_or_higher(member: discord.Member) -> bool:
@@ -83,7 +83,7 @@ async def on_ready():
     # Sync slash commands to all guilds
     for guild in client.guilds:
         try:
-            await tree.sync(guild=guild)
+            await client.tree.sync(guild=guild)
             logger.info(f"Synced slash commands to {guild.name}")
         except Exception as e:
             logger.error(f"Failed to sync commands to {guild.name}: {e}")
