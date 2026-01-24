@@ -66,6 +66,13 @@
           "parameters": {
             "channel_id": {"type": "string", "required": true, "description": "Channel ID"}
           }
+        },
+        "crosspost": {
+          "description": "Crosspost (publish) a message from an announcement channel to following servers",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Announcement channel ID"},
+            "message_id": {"type": "string", "required": true, "description": "Message ID to crosspost"}
+          }
         }
       }
     },
@@ -180,6 +187,27 @@
           "description": "Delete a thread",
           "parameters": {
             "thread_id": {"type": "string", "required": true, "description": "Thread ID to delete"}
+          }
+        },
+        "list_members": {
+          "description": "List members in a thread",
+          "parameters": {
+            "thread_id": {"type": "string", "required": true, "description": "Thread ID"},
+            "limit": {"type": "integer", "required": false, "description": "Max members to return (1-100, default 100)"}
+          }
+        },
+        "list_archived_public": {
+          "description": "List archived public threads in a channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "limit": {"type": "integer", "required": false, "description": "Max threads to return (default 50)"}
+          }
+        },
+        "list_archived_private": {
+          "description": "List archived private threads in a channel",
+          "parameters": {
+            "channel_id": {"type": "string", "required": true, "description": "Channel ID"},
+            "limit": {"type": "integer", "required": false, "description": "Max threads to return (default 50)"}
           }
         }
       }
@@ -381,6 +409,12 @@
           "description": "Delete a role",
           "parameters": {
             "role_id": {"type": "string", "required": true, "description": "Role ID to delete"}
+          }
+        },
+        "reorder": {
+          "description": "Reorder roles by position",
+          "parameters": {
+            "roles": {"type": "array", "required": true, "description": "Array of {id, position} objects specifying new positions"}
           }
         }
       }

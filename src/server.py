@@ -377,6 +377,19 @@ async def handle_messages_list_pins(params: dict) -> str:
         return json.dumps(formatted, indent=2)
 
 
+async def handle_messages_crosspost(params: dict) -> str:
+    channel_id = params["channel_id"]
+    message_id = params["message_id"]
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.post(
+            f"{BASE_URL}/channels/{channel_id}/messages/{message_id}/crosspost",
+            headers=get_headers(),
+        )
+        resp.raise_for_status()
+        return f"Message {message_id} crossposted to following servers"
+
+
 # ============================================================================
 # REACTION HANDLERS
 # ============================================================================
@@ -596,6 +609,76 @@ async def handle_threads_delete(params: dict) -> str:
         )
         resp.raise_for_status()
         return f"Thread {thread_id} deleted"
+
+
+async def handle_threads_list_members(params: dict) -> str:
+    thread_id = params["thread_id"]
+    limit = min(params.get("limit", 100), 100)
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(
+            f"{BASE_URL}/channels/{thread_id}/thread-members",
+            headers=get_headers(),
+            params={"limit": limit, "with_member": "true"},
+        )
+        resp.raise_for_status()
+        members = resp.json()
+        formatted = [
+            {
+                "user_id": m.get("user_id"),
+                "join_timestamp": m.get("join_timestamp"),
+            }
+            for m in members
+        ]
+        return json.dumps(formatted, indent=2)
+
+
+async def handle_threads_list_archived_public(params: dict) -> str:
+    channel_id = params["channel_id"]
+    limit = params.get("limit", 50)
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(
+            f"{BASE_URL}/channels/{channel_id}/threads/archived/public",
+            headers=get_headers(),
+            params={"limit": limit},
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        threads = [
+            {
+                "id": t.get("id"),
+                "name": t.get("name"),
+                "archived": t.get("thread_metadata", {}).get("archived"),
+                "archive_timestamp": t.get("thread_metadata", {}).get("archive_timestamp"),
+            }
+            for t in data.get("threads", [])
+        ]
+        return json.dumps({"threads": threads, "has_more": data.get("has_more", False)}, indent=2)
+
+
+async def handle_threads_list_archived_private(params: dict) -> str:
+    channel_id = params["channel_id"]
+    limit = params.get("limit", 50)
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(
+            f"{BASE_URL}/channels/{channel_id}/threads/archived/private",
+            headers=get_headers(),
+            params={"limit": limit},
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        threads = [
+            {
+                "id": t.get("id"),
+                "name": t.get("name"),
+                "archived": t.get("thread_metadata", {}).get("archived"),
+                "archive_timestamp": t.get("thread_metadata", {}).get("archive_timestamp"),
+            }
+            for t in data.get("threads", [])
+        ]
+        return json.dumps({"threads": threads, "has_more": data.get("has_more", False)}, indent=2)
 
 
 # ============================================================================
@@ -1016,6 +1099,19 @@ async def handle_roles_delete(params: dict) -> str:
         )
         resp.raise_for_status()
         return f"Role {role_id} deleted"
+
+
+async def handle_roles_reorder(params: dict) -> str:
+    roles = params["roles"]
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.patch(
+            f"{BASE_URL}/guilds/{GUILD_ID}/roles",
+            headers=get_headers(),
+            json=roles,
+        )
+        resp.raise_for_status()
+        return f"Reordered {len(roles)} roles"
 
 
 # ============================================================================
@@ -2881,6 +2977,7 @@ HANDLERS = {
     "messages.pin": handle_messages_pin,
     "messages.unpin": handle_messages_unpin,
     "messages.list_pins": handle_messages_list_pins,
+    "messages.crosspost": handle_messages_crosspost,
     # Reactions
     "reactions.add": handle_reactions_add,
     "reactions.remove": handle_reactions_remove,
@@ -2898,6 +2995,9 @@ HANDLERS = {
     "threads.unarchive": handle_threads_unarchive,
     "threads.lock": handle_threads_lock,
     "threads.delete": handle_threads_delete,
+    "threads.list_members": handle_threads_list_members,
+    "threads.list_archived_public": handle_threads_list_archived_public,
+    "threads.list_archived_private": handle_threads_list_archived_private,
     # Channels
     "channels.list": handle_channels_list,
     "channels.get": handle_channels_get,
@@ -2927,6 +3027,7 @@ HANDLERS = {
     "roles.create": handle_roles_create,
     "roles.edit": handle_roles_edit,
     "roles.delete": handle_roles_delete,
+    "roles.reorder": handle_roles_reorder,
     # Invites
     "invites.list": handle_invites_list,
     "invites.create": handle_invites_create,
