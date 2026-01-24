@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 5 of 5 (Link Scanning)
-Plan: 0 of 0 in current phase
-Status: Not started
-Last activity: 2026-01-24 — Completed Phase 4 (Raid Detection)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-01-24 — Completed 05-01-PLAN.md
 
-Progress: [████████░░] 80%
+Progress: [█████████░] 87%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
+- Total plans completed: 15
 - Average duration: 7 min
-- Total execution time: 97 min
+- Total execution time: 100 min
 
 **By Phase:**
 
@@ -31,10 +31,11 @@ Progress: [████████░░] 80%
 | 02-verification-gate | 4 | 60min | 15min |
 | 03-account-restrictions | 3 | 28min | 9min |
 | 04-raid-detection | 5 | 9min | 2min |
+| 05-link-scanning | 1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (3min), 04-02 (1min), 04-03 (2min), 04-05 (3min), 04-04 (2min)
-- Trend: Gap closure plans execute quickly with focused scope
+- Last 5 plans: 04-02 (1min), 04-03 (2min), 04-05 (3min), 04-04 (2min), 05-01 (3min)
+- Trend: Infrastructure plans execute quickly with focused scope
 
 *Updated after each plan completion*
 
@@ -80,6 +81,10 @@ Recent decisions affecting current work:
 - Administrator permission for lockdown (04-03) — Higher impact than single-member moderation
 - Ephemeral moderation responses (04-03) — Privacy for mod actions, audit trail in #security-logs
 - Client injection for async tasks (04-04) — Pass Discord client at manager instantiation for guild lookups
+- httpx over requests for redirect following (05-01) — Async-native, no thread pool needed
+- tldextract for domain extraction (05-01) — Handles complex TLDs (co.uk, github.io) via Mozilla Public Suffix List
+- Subdomain matching in blocklist (05-01) — Prevents bypass (cdn.phishing.com matches phishing.com)
+- Return original URL on timeout (05-01) — Treat as safe to prevent DoS from slow servers
 
 ### Pending Todos
 
@@ -92,5 +97,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed Phase 4 (Raid Detection)
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
