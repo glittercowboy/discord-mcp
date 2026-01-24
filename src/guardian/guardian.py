@@ -6,6 +6,8 @@ from . import infrastructure
 from . import verification
 from . import logging_utils
 from . import verification_timeout
+from . import account_restrictions
+from . import config_manager
 
 # Configure logging
 logging.basicConfig(
@@ -146,6 +148,75 @@ async def on_member_remove(member: discord.Member):
     security_logs_channel = discord.utils.get(member.guild.channels, name="security-logs")
     if security_logs_channel:
         await logging_utils.log_member_leave(security_logs_channel, member)
+
+
+@client.event
+async def on_message(message: discord.Message):
+    """Filter messages from new accounts."""
+    # Ignore bot messages
+    if message.author.bot:
+        return
+
+    # Get guild and check for required infrastructure
+    guild = message.guild
+    if not guild:
+        return  # DM, not a guild message
+
+    # Load config
+    config = config_manager.load_config(guild.id)
+
+    # Check if account is exempt
+    member = message.author
+    if account_restrictions.is_account_exempt(member, config):
+        return
+
+    # Check account age
+    account_age_days = account_restrictions.get_account_age_days(message.author)
+    threshold = config.get("threshold_days", 7)
+
+    if account_age_days >= threshold:
+        return  # Account old enough, no restrictions
+
+    # Check for content violations
+    violations = account_restrictions.check_content_violations(message)
+    if not violations:
+        return  # No violations
+
+    # Delete message silently
+    try:
+        await message.delete()
+    except discord.Forbidden:
+        logger.error(f"Cannot delete message in {guild.name}: Missing permissions")
+        return
+    except discord.NotFound:
+        logger.warning(f"Message already deleted in {guild.name}")
+        return
+
+    # DM user explaining violation
+    violation_text = ", ".join(violations)
+    try:
+        await message.author.send(
+            f"Your message was deleted in **{guild.name}** because it contained: {violation_text}\n\n"
+            f"Your account is new (created {account_age_days:.1f} days ago), so we restrict certain content "
+            f"for the first {threshold} days. This helps protect the community from spam and scams.\n\n"
+            f"You'll be able to post this content once your account is {threshold} days old."
+        )
+    except discord.Forbidden:
+        logger.warning(f"Cannot DM {message.author.name}: DMs disabled")
+
+    # Log violation to #security-logs
+    security_logs = discord.utils.get(guild.channels, name="security-logs")
+    if security_logs:
+        embed = discord.Embed(
+            title="Account Restriction Violation",
+            color=discord.Color.red()
+        )
+        embed.add_field(name="User", value=f"{message.author.mention} ({account_age_days:.1f} days old)", inline=False)
+        embed.add_field(name="Channel", value=message.channel.mention, inline=False)
+        embed.add_field(name="Violations", value=violation_text, inline=False)
+        await security_logs.send(embed=embed)
+
+    logger.info(f"Deleted message from {message.author.name} in {guild.name}: {violation_text}")
 
 
 if __name__ == "__main__":
