@@ -38,7 +38,7 @@ client.tree.add_command(guardian_commands)
 
 # Raid detection and lockdown management
 join_tracker = raid_detection.JoinTracker(window_seconds=30)
-lockdown_manager = raid_lockdown.RaidLockdownManager(recovery_seconds=900)  # 15 minutes
+lockdown_manager = raid_lockdown.RaidLockdownManager(client=client, recovery_seconds=900)  # 15 minutes
 
 
 def is_moderator_or_higher(member: discord.Member) -> bool:
@@ -162,6 +162,14 @@ async def on_member_join(member: discord.Member):
     if raid_detected:
         await lockdown_manager.activate_lockdown(member.guild, security_logs_channel)
 
+    # Check lockdown BEFORE role assignment to avoid orphaned @Unverified roles
+    if lockdown_manager.lockdown_state.get(member.guild.id, {}).get("active", False):
+        logger.info(f"Verification paused for {member.name} during lockdown in {member.guild.name}")
+        # Log join for audit trail but skip role assignment and verification UI
+        if security_logs_channel:
+            await logging_utils.log_member_join(security_logs_channel, member)
+        return
+
     try:
         # Get @Unverified role
         unverified_role = discord.utils.get(member.guild.roles, name="Unverified")
@@ -182,12 +190,6 @@ async def on_member_join(member: discord.Member):
 
         # Log member join
         await logging_utils.log_member_join(security_logs_channel, member)
-
-        # Pause new verifications during lockdown
-        if lockdown_manager.lockdown_state.get(member.guild.id, {}).get("active", False):
-            logger.info(f"Verification paused for {member.name} during lockdown in {member.guild.name}")
-            # Log join but skip verification UI
-            return
 
         # Get @Verified role for verification view
         verified_role = discord.utils.get(member.guild.roles, name="Verified")
