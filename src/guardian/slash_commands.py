@@ -2,6 +2,7 @@
 import logging
 import discord
 from discord import app_commands
+from datetime import timedelta
 from . import config_manager
 from . import logging_utils
 
@@ -276,3 +277,148 @@ class GuardianCommands(app_commands.Group):
                 ephemeral=True
             )
             logger.info(f"Exempt role removed: {role.name} by {interaction.user.name} in {interaction.guild.name}")
+
+    @app_commands.command(name="kick", description="Kick a member from the server")
+    @app_commands.checks.has_permissions(kick_members=True)
+    @app_commands.checks.bot_has_permissions(kick_members=True)
+    async def kick_command(self, interaction: discord.Interaction, member: discord.Member, reason: str = None):
+        """Kick a member with logging.
+
+        Args:
+            interaction: Slash command interaction
+            member: Member to kick
+            reason: Optional reason for kick
+        """
+        try:
+            # Kick member
+            await member.kick(reason=reason or "Manual kick via /guardian")
+
+            # Log to #security-logs
+            security_logs = discord.utils.get(interaction.guild.channels, name="security-logs")
+            if security_logs:
+                await logging_utils.log_moderation_action(
+                    security_logs_channel=security_logs,
+                    action="kick",
+                    member=member,
+                    reason=reason or "Manual kick",
+                    moderator=interaction.user
+                )
+
+            # Confirm to moderator
+            embed = discord.Embed(
+                title="Member Kicked",
+                description=f"{member.mention} has been kicked",
+                color=discord.Color.red()
+            )
+            if reason:
+                embed.add_field(name="Reason", value=reason)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        except discord.Forbidden:
+            await interaction.response.send_message("Cannot kick this member (permission denied or hierarchy issue).", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"Failed to kick member: {e}", ephemeral=True)
+
+    @app_commands.command(name="ban", description="Ban a member from the server")
+    @app_commands.checks.has_permissions(ban_members=True)
+    @app_commands.checks.bot_has_permissions(ban_members=True)
+    async def ban_command(self, interaction: discord.Interaction, member: discord.Member, reason: str = None, delete_days: int = 1):
+        """Ban a member with message deletion and logging.
+
+        Args:
+            interaction: Slash command interaction
+            member: Member to ban
+            reason: Optional reason for ban
+            delete_days: Days of messages to delete (0-7, default 1)
+        """
+        # Validate delete_days
+        if not (0 <= delete_days <= 7):
+            await interaction.response.send_message("delete_days must be 0-7.", ephemeral=True)
+            return
+
+        try:
+            # Ban member (delete_message_seconds is days * 86400)
+            await member.ban(
+                reason=reason or "Manual ban via /guardian",
+                delete_message_seconds=delete_days * 86400
+            )
+
+            # Log to #security-logs
+            security_logs = discord.utils.get(interaction.guild.channels, name="security-logs")
+            if security_logs:
+                await logging_utils.log_moderation_action(
+                    security_logs_channel=security_logs,
+                    action="ban",
+                    member=member,
+                    reason=reason or "Manual ban",
+                    moderator=interaction.user
+                )
+
+            # Confirm to moderator
+            embed = discord.Embed(
+                title="Member Banned",
+                description=f"{member.mention} has been banned",
+                color=discord.Color.red()
+            )
+            if reason:
+                embed.add_field(name="Reason", value=reason)
+            embed.add_field(name="Messages Deleted", value=f"Last {delete_days} day(s)")
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        except discord.Forbidden:
+            await interaction.response.send_message("Cannot ban this member (permission denied or hierarchy issue).", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"Failed to ban member: {e}", ephemeral=True)
+
+    @app_commands.command(name="timeout", description="Timeout a member for specified duration")
+    @app_commands.checks.has_permissions(moderate_members=True)
+    @app_commands.checks.bot_has_permissions(moderate_members=True)
+    async def timeout_command(self, interaction: discord.Interaction, member: discord.Member, minutes: int = 10, reason: str = None):
+        """Timeout a member with logging.
+
+        Args:
+            interaction: Slash command interaction
+            member: Member to timeout
+            minutes: Timeout duration in minutes (1-40320, max 28 days)
+            reason: Optional reason for timeout
+        """
+        # Validate duration (Discord max is 28 days = 40320 minutes)
+        if not (1 <= minutes <= 40320):
+            await interaction.response.send_message("Minutes must be 1-40320 (max 28 days).", ephemeral=True)
+            return
+
+        try:
+            # Timeout member
+            duration = timedelta(minutes=minutes)
+            await member.timeout(duration, reason=reason or "Manual timeout via /guardian")
+
+            # Format duration for logging
+            hours, mins = divmod(minutes, 60)
+            duration_str = f"{hours}h {mins}m" if hours > 0 else f"{mins}m"
+
+            # Log to #security-logs
+            security_logs = discord.utils.get(interaction.guild.channels, name="security-logs")
+            if security_logs:
+                await logging_utils.log_moderation_action(
+                    security_logs_channel=security_logs,
+                    action="timeout",
+                    member=member,
+                    reason=reason or "Manual timeout",
+                    moderator=interaction.user,
+                    duration=duration_str
+                )
+
+            # Confirm to moderator
+            embed = discord.Embed(
+                title="Member Timed Out",
+                description=f"{member.mention} timed out for {duration_str}",
+                color=discord.Color.orange()
+            )
+            if reason:
+                embed.add_field(name="Reason", value=reason)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        except discord.Forbidden:
+            await interaction.response.send_message("Cannot timeout this member (permission denied or hierarchy issue).", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"Failed to timeout member: {e}", ephemeral=True)
