@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 4 of 5 (Raid Detection)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-01-24 — Completed 04-01-PLAN.md
+Last activity: 2026-01-24 — Completed 04-02-PLAN.md
 
-Progress: [███████░░░] 70%
+Progress: [████████░░] 73%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 9 min
-- Total execution time: 91 min
+- Total plans completed: 11
+- Average duration: 8 min
+- Total execution time: 92 min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [███████░░░] 70%
 | 01-foundation | 2 | 20min | 10min |
 | 02-verification-gate | 4 | 60min | 15min |
 | 03-account-restrictions | 3 | 28min | 9min |
-| 04-raid-detection | 1 | 3min | 3min |
+| 04-raid-detection | 2 | 4min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (2min), 03-02 (2min), 03-03 (24min debugging), 04-01 (3min)
+- Last 5 plans: 03-02 (2min), 03-03 (24min debugging), 04-01 (3min), 04-02 (1min)
 - Trend: Infrastructure plans execute quickly, integration plans require debugging
 
 *Updated after each plan completion*
@@ -73,6 +73,9 @@ Recent decisions affecting current work:
 - Exclude verify/security-logs from slowmode (04-01) — Operational channels remain functional during raid
 - 15-minute auto-recovery default (04-01) — Most raids conclude quickly, prevents indefinite lockdown
 - Immediate moderation logging (04-01) — No audit log delay, complete data at call site
+- RAID-03 runs independently of RAID-01 (04-02) — Separate alert even if join count <10, covers slow-drip raids
+- Verification pause after role assignment (04-02) — Users get @Unverified but no UI during lockdown
+- Moderator bypass preserved (04-02) — Joins tracked for metrics but verification skipped
 
 ### Pending Todos
 
@@ -85,5 +88,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 04-01-PLAN.md
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None
