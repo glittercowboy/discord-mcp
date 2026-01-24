@@ -99,10 +99,11 @@ Plans:
   3. First offense: message deleted, poster receives 1hr timeout, action logged
   4. Second offense: poster auto-banned, ban logged with evidence
   5. All deleted scam links logged to #security-logs with message context and poster info
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD during planning
+- [ ] 05-01-PLAN.md — Link scanning infrastructure (URL resolution, blocklist, offense tracking)
+- [ ] 05-02-PLAN.md — Wire link scanning into on_message with punishment escalation
 
 ## Progress
 
@@ -115,4 +116,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Verification Gate | 4/4 | ✓ Complete | 2026-01-24 |
 | 3. Account Restrictions | 3/3 | ✓ Complete | 2026-01-24 |
 | 4. Raid Detection | 5/5 | ✓ Complete | 2026-01-24 |
-| 5. Link Scanning | 0/0 | Not started | - |
+| 5. Link Scanning | 0/2 | Not started | - |
