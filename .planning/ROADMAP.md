@@ -80,12 +80,14 @@ Plans:
   3. >50% of recent joins are accounts <7 days old, additional alert fires
   4. 15 minutes pass with no suspicious activity, lockdown auto-deactivates
   5. All Guardian mod actions (kicks, bans, timeouts) log to #security-logs
-**Plans**: 3 plans
+**Plans**: 5 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Core detection and lockdown modules (raid_detection, raid_lockdown, logging)
-- [ ] 04-02-PLAN.md — Wire join detection into on_member_join event
-- [ ] 04-03-PLAN.md — Moderation and manual lockdown commands
+- [x] 04-01-PLAN.md — Core detection and lockdown modules (raid_detection, raid_lockdown, logging)
+- [x] 04-02-PLAN.md — Wire join detection into on_member_join event
+- [x] 04-03-PLAN.md — Moderation and manual lockdown commands
+- [ ] 04-04-PLAN.md — Gap closure: Complete auto-recovery deactivation
+- [ ] 04-05-PLAN.md — Gap closure: Fix verification pause timing
 
 ### Phase 5: Link Scanning
 **Goal**: Messages with known phishing links are deleted and poster punished
