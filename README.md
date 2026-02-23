@@ -26,14 +26,25 @@ A Model Context Protocol (MCP) server that provides full administrative control 
 
 ## Installation
 
-1. Clone the repository:
+### Option A: Editable Install (Recommended)
+
+This makes the `discord-mcp` command available system-wide:
+
 ```bash
 git clone https://github.com/glittercowboy/discord-mcp.git
 cd discord-mcp
+uv tool install -e .
 ```
 
-2. Install dependencies:
+You can also use `pipx install -e .` if you prefer pipx over uv.
+
+### Option B: Run from Directory
+
+Clone and run directly without installing:
+
 ```bash
+git clone https://github.com/glittercowboy/discord-mcp.git
+cd discord-mcp
 uv sync
 ```
 
@@ -140,9 +151,16 @@ You need two values:
 - **Bot Token** (from Step 3)
 - **Server ID** (from Step 7)
 
-### Claude Desktop
+### Command Reference
 
-Add to your Claude Desktop configuration file:
+Depending on your installation method:
+
+| Method | Command |
+|--------|---------|
+| Editable install (`uv tool install -e .`) | `discord-mcp` |
+| Run from directory | `uv --directory /path/to/discord-mcp run python -m src.server` |
+
+### Claude Desktop
 
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
@@ -162,14 +180,11 @@ Add to your Claude Desktop configuration file:
 }
 ```
 
-Replace:
-- `/path/to/discord-mcp` with the actual path where you cloned the repo
-- `your-bot-token-here` with your bot token from Step 3
-- `your-server-id-here` with your server ID from Step 7
+> **Tip:** If you used `uv tool install -e .`, you can simplify to just `"command": "discord-mcp"` with no `args`.
 
 ### Claude Code
 
-Add to your MCP settings (`.claude/settings.json` or via `claude mcp add`):
+Add to `.claude/settings.json` or via `claude mcp add`:
 
 ```json
 {
@@ -186,9 +201,44 @@ Add to your MCP settings (`.claude/settings.json` or via `claude mcp add`):
 }
 ```
 
+> **Tip:** If you used `uv tool install -e .`, you can simplify to just `"command": "discord-mcp"` with no `args`.
+
+### OpenCode
+
+Add to `~/.config/opencode/opencode.json`:
+
+```json
+{
+  "mcp": {
+    "discord": {
+      "type": "local",
+      "command": ["discord-mcp"],
+      "environment": {
+        "DISCORD_BOT_TOKEN": "your-bot-token-here",
+        "DISCORD_GUILD_ID": "your-server-id-here"
+      },
+      "enabled": true
+    }
+  }
+}
+```
+
+**Optional:** Add a Discord agent for auto-allowed permissions (press Tab to switch):
+
+```json
+{
+  "agent": {
+    "Discord": {
+      "mode": "primary",
+      "permission": { "discord_*": "allow" }
+    }
+  }
+}
+```
+
 ## Verifying Setup
 
-After configuration, restart Claude Desktop/Code and try:
+After configuration, restart your MCP client (Claude Desktop, Claude Code, or OpenCode) and try:
 
 1. Ask Claude to discover available Discord operations
 2. Ask Claude to list channels in your server
