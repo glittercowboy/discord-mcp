@@ -61,13 +61,20 @@ def format_member(member: dict) -> dict:
 
 def format_message(msg: dict) -> dict:
     """Format message object with essential fields."""
-    return {
+    result = {
         "id": msg.get("id"),
         "content": msg.get("content"),
         "author": format_user(msg.get("author", {})),
         "timestamp": msg.get("timestamp"),
         "reply_to": msg.get("referenced_message", {}).get("id") if msg.get("referenced_message") else None,
     }
+    if msg.get("embeds"):
+        result["embeds"] = msg["embeds"]
+    if msg.get("attachments"):
+        result["attachments"] = msg["attachments"]
+    if msg.get("reactions"):
+        result["reactions"] = msg["reactions"]
+    return result
 
 
 def format_channel(channel: dict) -> dict:
